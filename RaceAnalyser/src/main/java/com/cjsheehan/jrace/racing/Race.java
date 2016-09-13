@@ -3,53 +3,92 @@ package com.cjsheehan.jrace.racing;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * @author Chris
+ *
+ */
 public class Race {
     private Date date;
     private String track;
+    private int numRunners;
+    private Distance distance;
+    private String going;
     private List<Double> prizes;
     private Prize winPrize;
 
-    public Race(Date date, String track, Prize winPrize) {
+    /**
+     * @param date
+     * @param track
+     * @param numRunners
+     * @param distance
+     * @param going
+     * @param prizes
+     * @param winPrize
+     */
+    public Race(Date date, String track, int numRunners, Distance distance, String going, 
+	    Prize winPrize) {
 	super();
 	this.date = date;
 	this.track = track;
+	this.numRunners = numRunners;
+	this.distance = distance;
+	this.going = going;
 	this.winPrize = winPrize;
     }
 
+    /**
+     * @return the date
+     */
     public Date getDate() {
 	return date;
     }
 
-    public void setDate(Date date) {
-	this.date = date;
-    }
-
+    /**
+     * @return the track
+     */
     public String getTrack() {
 	return track;
     }
 
-    public void setTrack(String track) {
-	this.track = track;
+    /**
+     * @return the numRunners
+     */
+    public int getNumRunners() {
+	return numRunners;
     }
 
+    /**
+     * @return the distance
+     */
+    public Distance getDistance() {
+	return distance;
+    }
+
+    /**
+     * @return the going
+     */
+    public String getGoing() {
+	return going;
+    }
+
+    /**
+     * @return the prizes
+     */
     public List<Double> getPrizes() {
 	return prizes;
     }
 
-    public void setPrizes(List<Double> prizes) {
-	this.prizes = prizes;
-    }
-
+    /**
+     * @return the winPrize
+     */
     public Prize getWinPrize() {
 	return winPrize;
     }
 
-    public void setWinPrize(Prize winPrize) {
-	this.winPrize = winPrize;
-    }
-
+    @Override
     public String toString() {
-	return "Track: " + this.track + ", Date: " + this.date + ", Prize: " + this.winPrize;
+	return "Track: " + getTrack() + ", Date: " + getDate() + ", Prize: " + getWinPrize() + ", Runners: "
+		+ getNumRunners() + ", Distance: " + distance.toString() + ", Going: " + getGoing();
     }
 
 }

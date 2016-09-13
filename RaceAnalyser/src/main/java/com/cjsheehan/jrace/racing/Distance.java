@@ -8,7 +8,6 @@ public class Distance {
 	super();
 	this.distance = distance;
 	setYards(distance);
-
     }
 
     public String getDistance() {
@@ -20,6 +19,11 @@ public class Distance {
     }
 
     private void setYards(String distance) {
-	this.yards = ConvertDistance.toYards(distance);
+	yards = ConvertDistance.toYards(distance);
+    }
+    
+    @Override
+    public String toString() {
+	return "Actual: " + getDistance() + ", Yards: " + getYards();
     }
 }

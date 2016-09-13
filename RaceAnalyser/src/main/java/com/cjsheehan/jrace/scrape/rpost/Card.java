@@ -5,14 +5,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import javax.print.Doc;
-
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import com.cjsheehan.jrace.racing.Currency;
+import com.cjsheehan.jrace.racing.Distance;
 import com.cjsheehan.jrace.racing.Prize;
 import com.cjsheehan.jrace.racing.Race;
 
@@ -48,8 +47,11 @@ public class Card {
 	String track = getTrack(doc);
 	Date date = getDate(doc);
 	Prize winPrize = getPrize(doc);
+	int numRunners = getNumRunners(doc);
+	Distance distance = getDistance(doc);
+	String going = getGoing(doc);
 
-	return new Race(date, track, winPrize);
+	return new Race(date, track, numRunners, distance, going, winPrize);
 
     }
 
@@ -121,5 +123,24 @@ public class Card {
 	    numRunners = Integer.parseInt(elem.ownText());
 	}
 	return numRunners;
+    }
+    
+    private Distance getDistance(Document doc) {
+	Element elem = doc.select(DISTANCE_SELECT).first();
+	Distance distance = null;
+	if (elem != null) {
+	    String dist = elem.ownText();
+	    distance = new Distance(dist);
+	}
+	return distance;
+    }
+    
+    private String getGoing(Document doc) {
+	Element elem = doc.select(GOING_SELECT).first();
+	String going = null;
+	if (elem != null) {
+	    going = elem.ownText();
+	}
+	return going;
     }
 }
