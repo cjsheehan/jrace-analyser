@@ -1,6 +1,5 @@
 package com.cjsheehan.jrace.racing;
 
-public enum Currency
-{
+public enum Currency {
     GBP, EUR, USD
 }

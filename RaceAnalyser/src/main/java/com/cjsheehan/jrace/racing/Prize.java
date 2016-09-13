@@ -1,28 +1,24 @@
 package com.cjsheehan.jrace.racing;
 
-public class Prize
-{
+public class Prize {
     private double value;
     private Currency currency;
-    
-    public Prize(double value, Currency currency)
-    {
-        super();
-        this.value = value;
-        this.currency = currency;
-    }
-    
-    public double getValue()
-    {
-        return this.value;
+
+    public Prize(double value, Currency currency) {
+	super();
+	this.value = value;
+	this.currency = currency;
     }
 
-    public Currency getCurrency()
-    {
-        return this.currency;
+    public double getValue() {
+	return this.value;
     }
-    
-    public String toString() { 
-        return getCurrency().name() + " " + getValue();
-    } 
+
+    public Currency getCurrency() {
+	return this.currency;
+    }
+
+    public String toString() {
+	return getCurrency().name() + " " + getValue();
+    }
 }
