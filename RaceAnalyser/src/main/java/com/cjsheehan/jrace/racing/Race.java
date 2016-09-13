@@ -8,9 +8,9 @@ public class Race
     private Date date;
     private String track;
     private List<Double> prizes;
-    private double winPrize;
+    private Prize winPrize;
     
-    public Race(Date date, String track, double winPrize)
+    public Race(Date date, String track, Prize winPrize)
     {
         super();
         this.date = date;
@@ -48,12 +48,12 @@ public class Race
         this.prizes = prizes;
     }
 
-    public double getWinPrize()
+    public Prize getWinPrize()
     {
         return winPrize;
     }
 
-    public void setWinPrize(double winPrize)
+    public void setWinPrize(Prize winPrize)
     {
         this.winPrize = winPrize;
     }

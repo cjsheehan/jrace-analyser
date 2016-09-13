@@ -10,6 +10,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import com.cjsheehan.jrace.racing.Currency;
+import com.cjsheehan.jrace.racing.Prize;
 import com.cjsheehan.jrace.racing.Race;
 
 public class Card
@@ -20,7 +22,7 @@ public class Card
     private static final String DATE_SELECT = "div.raceTitle span.placeRace > span.date";
     private static final String WIN_PRIZE_SELECT = "div.raceInfo > ul > li:nth-child(1) > strong";
     
-    private static final String DATE_FORMAT = "hh:mm EEEE, dd MMMM yyyy"; 
+    private static final String DATE_FORMAT = "h:mm EEEE, dd MMMM yyyy"; 
     
     public Race scrape(String url) {
         if(StringUtils.isBlank(url)) {
@@ -47,7 +49,7 @@ public class Card
                 
         String track = getTrack(doc);
         Date date = getDate(doc);
-        double winPrize = getPrize(doc);
+        Prize winPrize = getPrize(doc);
         
         return new Race(date, track, winPrize);
         
@@ -91,15 +93,31 @@ public class Card
         return dt;
     }
     
-    private double getPrize(Document doc) {
+    private Prize getPrize(Document doc) {
         Element elem = doc.select(WIN_PRIZE_SELECT).first();
         String prize = "";
-        if(elem != null) {
-            prize = elem.ownText()
-                    .replace("£", "")
-                    .replace(",", "");
-        }
-        return Double.parseDouble(prize);
+        double prizeVal = 0;
+        Currency cur = Currency.GBP;
         
+        if(elem != null) {
+            prize = elem.ownText();
+            if(prize.contains("€")) {
+                cur = Currency.EUR;
+            } else if(prize.contains("$")) {
+                cur = Currency.USD;
+            }
+            
+            prize = prize.replace("£", "")
+                    .replace("€", "")
+                    .replace(",", "");
+            
+        }
+        
+        if(prize != "") {
+            prizeVal = Double.parseDouble(prize);
+            return new Prize(prizeVal, cur);
+        } else {
+            return null;
+        }
     }
 }
