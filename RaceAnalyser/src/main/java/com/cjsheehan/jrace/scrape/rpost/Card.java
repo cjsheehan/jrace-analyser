@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -24,7 +26,15 @@ public class Card {
     private static final String NUM_RUNNERS_SELECT = "div.raceInfo > ul > li:nth-child(2) > strong";
     private static final String DISTANCE_SELECT = "div.raceInfo > ul > li:nth-child(3) > strong";
     private static final String GOING_SELECT = "div.raceInfo > ul > li:nth-child(4) > strong";
-
+    private static final String TITLE_SELECT = "div.raceInfo > div > p > strong > strong";
+    private static final String GRADE_SELECT = "div.raceInfo > div > p";
+    private static final String CONDITIONS_SELECT = "div.raceInfo > div > p";
+    
+    
+    // pattern match
+    static Pattern pGrade = Pattern.compile("(CLASS \\d{1})");
+    static Pattern pCond = Pattern.compile("\\(.+\\) *\\((.+)\\)");
+    
     private static final String DATE_FORMAT = "h:mm EEEE, dd MMMM yyyy";
 
     public Race scrape(String url) {
@@ -34,7 +44,10 @@ public class Card {
 
 	Document doc = null;
 	try {
-	    doc = Jsoup.connect(url).userAgent(Constants.ROOT_URL).timeout(Constants.MAX_WAIT).get();
+	    doc = Jsoup.connect(url)
+		    .userAgent(Constants.ROOT_URL)
+		    .timeout(Constants.MAX_WAIT)
+		    .get();
 
 	    if (doc == null) {
 		return null;
@@ -44,17 +57,48 @@ public class Card {
 	    e.printStackTrace();
 	}
 
-	String track = getTrack(doc);
+	String track = getString(doc, TRACK_SELECT);
 	Date date = getDate(doc);
 	Prize winPrize = getPrize(doc);
 	int numRunners = getNumRunners(doc);
 	Distance distance = getDistance(doc);
-	String going = getGoing(doc);
-
-	return new Race(date, track, numRunners, distance, going, winPrize);
+	String going = getString(doc, GOING_SELECT);
+	String title = getString(doc, TITLE_SELECT);
+	String grade = getGrade(doc);
+	String conditions = getConditions(doc);
+	
+	return new Race(date, track, numRunners, distance, going, null, winPrize, grade, conditions, title);
 
     }
 
+    private String getGrade(Document doc) {
+	Element elem = doc.select(GRADE_SELECT).first();
+	String grade = null;
+	if (elem != null) {
+	    String text = elem.ownText();
+	    Matcher mGrade = pGrade.matcher(text);
+	    if(mGrade.find()) {
+		grade = mGrade.group(1);
+	    }
+	}
+	
+	return grade;
+    }
+    
+    private String getConditions(Document doc) {
+	Element elem = doc.select(CONDITIONS_SELECT).first();
+	String cond = null;
+	if (elem != null) {
+	    Matcher mCond = pCond.matcher(elem.ownText());
+	    if(mCond.find()) {
+		cond = mCond.group(1);
+	    }
+	}
+	
+	return cond;
+    }
+
+    @SuppressWarnings("unused")
     private String getTrack(Document doc) {
 	Element elem = doc.select(TRACK_SELECT).first();
 	if (elem != null) {
@@ -135,6 +179,7 @@ public class Card {
 	return distance;
     }
     
+    @SuppressWarnings("unused")
     private String getGoing(Document doc) {
 	Element elem = doc.select(GOING_SELECT).first();
 	String going = null;
@@ -142,5 +187,14 @@ public class Card {
 	    going = elem.ownText();
 	}
 	return going;
+    }
+    
+    private String getString(Document doc, String selector) {
+	Element elem = doc.select(selector).first();
+	String target = null;
+	if (elem != null) {
+	    target = elem.ownText();
+	}
+	return target;
     }
 }

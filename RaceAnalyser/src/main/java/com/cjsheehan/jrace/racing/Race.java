@@ -15,6 +15,9 @@ public class Race {
     private String going;
     private List<Double> prizes;
     private Prize winPrize;
+    private String grade;
+    private String conditions;
+    private String title;
 
     /**
      * @param date
@@ -24,16 +27,23 @@ public class Race {
      * @param going
      * @param prizes
      * @param winPrize
+     * @param grade
+     * @param conditions
+     * @param title
      */
-    public Race(Date date, String track, int numRunners, Distance distance, String going, 
-	    Prize winPrize) {
+    public Race(Date date, String track, int numRunners, Distance distance, String going, List<Double> prizes,
+	    Prize winPrize, String grade, String conditions, String title) {
 	super();
 	this.date = date;
 	this.track = track;
 	this.numRunners = numRunners;
 	this.distance = distance;
 	this.going = going;
+	this.prizes = prizes;
 	this.winPrize = winPrize;
+	this.setGrade(grade);
+	this.setConditions(conditions);
+	this.setTitle(title);
     }
 
     /**
@@ -85,10 +95,53 @@ public class Race {
 	return winPrize;
     }
 
+    /**
+     * @return the grade
+     */
+    public String getGrade() {
+	return grade;
+    }
+
+    /**
+     * @param grade the grade to set
+     */
+    public void setGrade(String grade) {
+	this.grade = grade;
+    }
+
+    /**
+     * @return the conditions
+     */
+    public String getConditions() {
+	return conditions;
+    }
+
+    /**
+     * @param conditions the conditions to set
+     */
+    public void setConditions(String conditions) {
+	this.conditions = conditions;
+    }
+
+    /**
+     * @return the title
+     */
+    public String getTitle() {
+	return title;
+    }
+
+    /**
+     * @param title the title to set
+     */
+    public void setTitle(String title) {
+	this.title = title;
+    }
+
     @Override
     public String toString() {
 	return "Track: " + getTrack() + ", Date: " + getDate() + ", Prize: " + getWinPrize() + ", Runners: "
-		+ getNumRunners() + ", Distance: " + distance.toString() + ", Going: " + getGoing();
+		+ getNumRunners() + ", Distance: " + distance.toString() + ", Going: " + getGoing()
+		+ ", Grade: " + getGrade() + ", Conditions: " + getConditions() + ", Title: " + getTitle();
     }
 
 }
