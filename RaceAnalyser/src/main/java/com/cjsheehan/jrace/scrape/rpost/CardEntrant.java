@@ -28,14 +28,16 @@ public class CardEntrant {
     private static final String NO_SELECT = "tr.cr > td.t > strong";
     private static final String WEIGHT_SELECT = "tr.cr > td:nth-child(5) > div:nth-child(1)";
     private static final String OR_SELECT = "tr.cr > td:nth-child(5) > div:nth-child(2)";
-    private static final String RPR_SELECT = "";
-    private static final String TS_SELECT = "";
+    private static final String RPR_SELECT = "tr.cr > td:nth-child(8)";
+    private static final String TS_SELECT = "tr.cr > td:nth-child(7)";
     private static final String AGE_SELECT = "tr.cr > td.c";
     
     public CardEntrant(Element entrant) throws ScrapeException {
 	scrapeHorseName(entrant);
 	scrapeWeight(entrant);
 	scrapeOr(entrant);
+	scrapeRpr(entrant);
+	scrapeTs(entrant);
 	scrapeNo(entrant);
 	scrapeAge(entrant);
 	scrapeDraw(entrant);
@@ -89,6 +91,19 @@ public class CardEntrant {
 
     }
     
+    private void scrapeRpr(Element elem) throws ScrapeException {
+	try {
+	    String rpr = Scrape.text(elem, RPR_SELECT);
+	    if (rpr.equals("—")) {
+		setRpr(-1);
+	    } else {
+		setRpr(Integer.parseInt(rpr));
+	    }
+	} catch (Exception e) {
+	    throw new ScrapeException("RPR", elem.toString(), RPR_SELECT);
+	}
+    }
+    
     private void scrapeOr(Element elem) throws ScrapeException {
 
 	try {
@@ -101,9 +116,22 @@ public class CardEntrant {
 	} catch (Exception e) {
 	    throw new ScrapeException("OR", elem.toString(), OR_SELECT);
 	}
-	
-	setOr(or);
     }
+    
+    private void scrapeTs(Element elem) throws ScrapeException {
+
+	try {
+	    String ts = Scrape.text(elem, TS_SELECT);
+	    if (ts.equals("—")) {
+		setTs(-1);
+	    } else {
+		setTs(Integer.parseInt(ts));
+	    }
+	} catch (Exception e) {
+	    throw new ScrapeException("TS", elem.toString(), TS_SELECT);
+	}
+    }
+    
 
     /**
      * @return the weight
@@ -303,11 +331,13 @@ public class CardEntrant {
     @Override
     public String toString() {
 	return new ToStringBuilder(this)
-		.append("name", horseName)
-		.append("age", age)
-		.append("no", no)
-		.append("weight", weight)
-		.append("or", or)
+		.append("Name", horseName)
+		.append("Age", age)
+		.append("No.", no)
+		.append("Weight", weight)
+		.append("OR", or)
+		.append("TS", ts)
+		.append("RPR", rpr)
 		.toString();
     }
 
