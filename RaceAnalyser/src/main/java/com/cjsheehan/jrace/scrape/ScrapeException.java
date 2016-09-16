@@ -5,4 +5,8 @@ public class ScrapeException extends Exception {
     public ScrapeException(String message) {
 	super(message);
     }
+    
+    public ScrapeException(String source, String target, String selector) {
+	super(target + " could not be scraped using selector: " + selector + " \nfrom :" + source);
+    }
 }
