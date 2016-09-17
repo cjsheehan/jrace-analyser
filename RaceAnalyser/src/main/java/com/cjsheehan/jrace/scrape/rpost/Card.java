@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -23,6 +24,8 @@ public class Card {
     // core data
     private Date date;
     private String course;
+    private int raceId;
+    private String raceUrl;
     private int numRunners;
     private Distance distance;
     private String going;
@@ -50,22 +53,42 @@ public class Card {
     // pattern match
     static Pattern pGrade = Pattern.compile("(CLASS \\d{1})");
     static Pattern pCond = Pattern.compile("\\(.+\\) *\\((.+)\\)");
+    static Pattern pRaceId = Pattern.compile("race_id[=_](\\d+)");
     
     private static final String DATE_FORMAT = "h:mm EEEE, dd MMMM yyyy";
 
     public Card(Document doc) throws ScrapeException {
-	    scrapeCourse(doc);
-	    scrapeDate(doc);
-	    scrapePrize(doc);
-	    scrapeNumRunners(doc);
-	    scrapeDistance(doc);
-	    scrapeGoing(doc);
-	    scrapeTitle(doc);
-	    scrapeGrade(doc);
-	    scrapeConditions(doc);
-	    scrapeEntrants(doc);
+	setRaceUrl(doc.location());
+	scrapeRaceId(doc);
+	scrapeCourse(doc);
+	scrapeDate(doc);
+	scrapePrize(doc);
+	scrapeNumRunners(doc);
+	scrapeDistance(doc);
+	scrapeGoing(doc);
+	scrapeTitle(doc);
+	scrapeGrade(doc);
+	scrapeConditions(doc);
+	scrapeEntrants(doc);
     }
     
+
+    private void scrapeRaceId(Document doc) throws ScrapeException {
+	Matcher m = pRaceId.matcher(getRaceUrl());
+	if(m.find()) {
+	    int raceId;
+	    try {
+		raceId = Integer.parseInt(m.group(1));
+		setRaceId(raceId);
+	    } catch (NumberFormatException e) {
+		throw new ScrapeException("Race ID", getRaceUrl(), "pattern: " + pRaceId.toString());
+	    }
+	} else {
+	    throw new ScrapeException("Race ID", getRaceUrl(), "pattern: " + pRaceId.toString());
+	}
+    }
+
+
     private void scrapeConditions(Document doc) throws ScrapeException {
 	try {
 	    String conditions = Scrape.text(doc, CONDITIONS_SELECT);
@@ -201,6 +224,35 @@ public class Card {
 	}
     }
     
+    
+    /**
+     * @return the raceId
+     */
+    public int getRaceId() {
+        return raceId;
+    }
+
+    /**
+     * @param raceId the raceId to set
+     */
+    public void setRaceId(int raceId) {
+        this.raceId = raceId;
+    }
+
+    /**
+     * @return the raceUrl
+     */
+    public String getRaceUrl() {
+        return raceUrl;
+    }
+
+    /**
+     * @param raceUrl the raceUrl to set
+     */
+    public void setRaceUrl(String raceUrl) {
+        this.raceUrl = raceUrl;
+    }
+
 
     /**
      * @return the date
@@ -477,6 +529,8 @@ public class Card {
 	
 	return new ToStringBuilder(this)
 		.append("Course", getCourse())
+		.append("Race ID", getRaceId())
+		.append("Race URL", getRaceUrl())
 		.append("Winning Prize", getWinPrize())
 		.append("Runners", getNumRunners())
 		.append("Distance", getDistance())
