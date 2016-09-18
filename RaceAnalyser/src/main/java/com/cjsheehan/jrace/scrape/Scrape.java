@@ -24,7 +24,7 @@ public class Scrape {
 	if (selected != null) {
 	    text = selected.ownText();
 	} else {
-	    throw new ScrapeException("Could not scrape valid text from root with selector: " + selector);
+	    throw new ScrapeException("Could not scrape valid text from : \n" + root + "\n with selector : \n" + selector);
 	}
 	return text;
     }
@@ -37,9 +37,12 @@ public class Scrape {
 	    try {
 		integer = Integer.parseInt(text);
 	    } catch (NumberFormatException e) {
-		throw new ScrapeException("Could not scrape valid integer from root element with selector: " + selector);
+		throw new ScrapeException("Could not parse valid integer from root element with selector: " + selector + "from text : " + text);
 	    }
+	} else {
+	    throw new ScrapeException("Could not find element with selector: " + selector + "\n in :\n" + root.toString());
 	}
+	
 	return integer;
     }
     
