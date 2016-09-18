@@ -1,13 +1,20 @@
 package com.cjsheehan.jrace.scrape.rpost;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.cjsheehan.jrace.racing.CDBF;
 import com.cjsheehan.jrace.scrape.Scrape;
 import com.cjsheehan.jrace.scrape.ScrapeException;
 
 public class CardEntrant {
-
+    final Logger log = LoggerFactory.getLogger(CardEntrant.class);
     private String weight;
     private int or;
     private int rpr;
@@ -16,11 +23,14 @@ public class CardEntrant {
     private int draw;
     private int no;
     private String horseName;
+    private int lastRan;
     private int horseId;
     private String jockeyName;
     private int jockeyId;
+    private int jockeyClaim;
     private String trainerName;
     private int trainerId;
+    private CDBF entrantCDBF;
 
     // jsoup selectors
     private static final String HORSE_NAME_SELECT = "tr.cr > td:nth-child(3) > a > b";
@@ -31,6 +41,19 @@ public class CardEntrant {
     private static final String RPR_SELECT = "tr.cr > td:nth-child(8)";
     private static final String TS_SELECT = "tr.cr > td:nth-child(7)";
     private static final String AGE_SELECT = "tr.cr > td.c";
+    private static final String LAST_RAN_SELECT = "tr.cr > td:nth-child(3) > div > span";
+    private static final String JOCKEY_CLAIM_SELECT = "tr.cr > td:nth-child(6) > div:nth-child(1) > sup";
+    private static final String CDBF_SELECT = "tr.cr > td:nth-child(3) > div > span.ico > img";
+    
+    // rx patterns
+    private static final Pattern pCDBF = Pattern.compile("ico/distance-(.+)\\.gif");
+    
+    // const strings
+    private static final String DISTANCE = "d";
+    private static final String COURSE_AND_DISTANCE = "cd";
+    private static final String COURSE = "c";
+    private static final String BEATEN_FAVOURITE = "bf";
+    
     
     public CardEntrant(Element entrant) throws ScrapeException {
 	scrapeHorseName(entrant);
@@ -41,8 +64,48 @@ public class CardEntrant {
 	scrapeNo(entrant);
 	scrapeAge(entrant);
 	scrapeDraw(entrant);
+	scrapeLastRan(entrant);
+	scrapeCDBF(entrant);
     }
     
+    private void scrapeCDBF(Element elem) throws ScrapeException {
+	    Elements images = elem.select(CDBF_SELECT);
+	    entrantCDBF = new CDBF(false, false, false, false);
+	    if(images.size() > 0) {
+		for(Element image : images) {
+		    Matcher m = pCDBF.matcher(image.absUrl("src"));
+		    
+		    if(m.find()) {
+			switch (m.group(1)) {
+
+            		    case COURSE:
+            			entrantCDBF.setWonAtCourse(true);
+            			break;
+            
+            		    case DISTANCE:
+            			entrantCDBF.setWonAtDistance(true);
+            			break;
+            			
+            		    case COURSE_AND_DISTANCE:
+            			entrantCDBF.setWonAtCourseAndDistance(true);
+            			break;
+            			
+            		    case BEATEN_FAVOURITE:
+            			entrantCDBF.setBeatenFavourite(true);
+            			break;
+            
+            		    default:
+            			
+            			break;
+            		    }
+		    }
+		}
+		setCdbf(entrantCDBF);
+	    } else {
+		setCdbf(entrantCDBF);
+	    }
+    }
+
     private void scrapeHorseName(Element elem) throws ScrapeException {
 	try {
 	    String name = Scrape.text(elem, HORSE_NAME_SELECT);
@@ -132,6 +195,17 @@ public class CardEntrant {
 	}
     }
     
+    private void scrapeLastRan(Element elem) throws ScrapeException {
+	String lastRan;
+	try {
+	    lastRan = Scrape.text(elem, LAST_RAN_SELECT);
+	    setLastRan(Integer.parseInt(lastRan));
+	} catch (Exception e) {
+	    setLastRan(-1);
+	}
+    }
+
+
 
     /**
      * @return the weight
@@ -327,6 +401,29 @@ public class CardEntrant {
     public void setTrainerId(int trainerId) {
 	this.trainerId = trainerId;
     }
+    
+
+    /**
+     * @return the lastRan
+     */
+    public int getLastRan() {
+	return lastRan;
+    }
+
+    /**
+     * @param lastRan the lastRan to set
+     */
+    public void setLastRan(int lastRan) {
+	this.lastRan = lastRan;
+    }
+    
+    public CDBF getCdbf() {
+	return entrantCDBF;
+    }
+
+    public void setCdbf(CDBF cdbf) {
+	this.entrantCDBF = cdbf;
+    }
 
     @Override
     public String toString() {
@@ -340,5 +437,7 @@ public class CardEntrant {
 		.append("RPR", rpr)
 		.toString();
     }
+
+
 
 }
