@@ -27,7 +27,7 @@ public class CardEntrant {
     private int horseId;
     private String jockeyName;
     private int jockeyId;
-    private int jockeyClaim;
+    private int jockeyWeightClaim;
     private String trainerName;
     private int trainerId;
     private CDBF entrantCDBF;
@@ -42,11 +42,17 @@ public class CardEntrant {
     private static final String TS_SELECT = "tr.cr > td:nth-child(7)";
     private static final String AGE_SELECT = "tr.cr > td.c";
     private static final String LAST_RAN_SELECT = "tr.cr > td:nth-child(3) > div > span";
-    private static final String JOCKEY_CLAIM_SELECT = "tr.cr > td:nth-child(6) > div:nth-child(1) > sup";
     private static final String CDBF_SELECT = "tr.cr > td:nth-child(3) > div > span.ico > img";
-    
+    private static final String JOCKEY_NAME_SELECT = "tr.cr > td:nth-child(6) > div:nth-child(1) > a";
+    private static final String JOCKEY_CLAIM_SELECT = "tr.cr > td:nth-child(6) > div:nth-child(1) > sup";
+    private static final String JOCKEY_ID_SELECT = JOCKEY_NAME_SELECT;
+    private static final String TRAINER_NAME_SELECT = "tr.cr > td:nth-child(6) > div:nth-child(2) > a";
+    private static final String TRAINER_ID_SELECT = TRAINER_NAME_SELECT;
+	    
     // rx patterns
     private static final Pattern pCDBF = Pattern.compile("ico/distance-(.+)\\.gif");
+    private static final Pattern pJockeyId = Pattern.compile("jockey_id=(\\d+)");
+    private static final Pattern pTrainerId = Pattern.compile("trainer_id=(\\d+)");
     
     // const strings
     private static final String DISTANCE = "d";
@@ -66,8 +72,73 @@ public class CardEntrant {
 	scrapeDraw(entrant);
 	scrapeLastRan(entrant);
 	scrapeCDBF(entrant);
+	scrapeJockeyWeightClaim(entrant);
+	scrapeJockeyName(entrant);
+	scrapeJockeyId(entrant);
+	scrapeTrainerName(entrant);
+	scrapeTrainerId(entrant);
     }
     
+    private void scrapeTrainerId(Element elem) throws ScrapeException {
+	try {
+	    Element selected = elem.select(TRAINER_ID_SELECT).first();
+	    String text = selected.attr("href");
+	    Matcher m = pTrainerId.matcher(text);
+	    if (m.find()) {
+		int id = Integer.parseInt(m.group(1));
+		setTrainerId(id);
+	    } else {
+		throw new ScrapeException(String.format("Could not match %1 in text %2", pTrainerId.toString(), text));
+	    }
+	} catch (Exception e) {
+	    throw new ScrapeException("Trainer ID", elem.toString(), TRAINER_ID_SELECT);
+	}
+    }
+
+    private void scrapeTrainerName(Element elem) throws ScrapeException {
+	try {
+	    String name = Scrape.text(elem, TRAINER_NAME_SELECT);
+	    setTrainerName(name);
+	} catch (Exception e) {
+	    throw new ScrapeException("Trainer Name", elem.toString(), TRAINER_NAME_SELECT);
+	}
+    }
+
+    private void scrapeJockeyId(Element elem) throws ScrapeException {
+	try {
+	    Element selected = elem.select(JOCKEY_ID_SELECT).first();
+	    String text = selected.attr("href");
+	    Matcher m = pJockeyId.matcher(text);
+	    if (m.find()) {
+		int id = Integer.parseInt(m.group(1));
+		setJockeyId(id);
+	    } else {
+		throw new ScrapeException(String.format("Could not match %1 in text %2", pJockeyId.toString(), text));
+	    }
+	} catch (Exception e) {
+	    throw new ScrapeException("Jockey ID", elem.toString(), JOCKEY_ID_SELECT);
+	}
+    }
+
+    private void scrapeJockeyName(Element elem) throws ScrapeException {
+	try {
+	    String name = Scrape.text(elem, JOCKEY_NAME_SELECT);
+	    setJockeyName(name);
+	} catch (Exception e) {
+	    throw new ScrapeException("Jockey Name", elem.toString(), JOCKEY_NAME_SELECT);
+	}
+    }
+
+    private void scrapeJockeyWeightClaim(Element elem) throws ScrapeException {
+	try {
+	    int claim = Scrape.integer(elem, JOCKEY_CLAIM_SELECT);
+	    setJockeyWeightClaim(claim);
+	} catch (Exception e) {
+	    // This is OK, not all jockeys have a weight claim
+	    setJockeyWeightClaim(0);
+	}
+    }
+
     private void scrapeCDBF(Element elem) throws ScrapeException {
 	    Elements images = elem.select(CDBF_SELECT);
 	    entrantCDBF = new CDBF(false, false, false, false);
@@ -425,16 +496,38 @@ public class CardEntrant {
 	this.entrantCDBF = cdbf;
     }
 
+    /**
+     * @return the jockeyWeightClaim
+     */
+    public int getJockeyWeightClaim() {
+	return jockeyWeightClaim;
+    }
+
+    /**
+     * @param jockeyWeightClaim the jockeyWeightClaim to set
+     */
+    public void setJockeyWeightClaim(int jockeyWeightClaim) {
+	this.jockeyWeightClaim = jockeyWeightClaim;
+    }
+
     @Override
     public String toString() {
 	return new ToStringBuilder(this)
-		.append("Name", horseName)
+		.append("Horse Name", horseName)
+		.append("Horse ID", horseId)
 		.append("Age", age)
 		.append("No.", no)
 		.append("Weight", weight)
 		.append("OR", or)
 		.append("TS", ts)
 		.append("RPR", rpr)
+		.append("Last Ran", lastRan)
+		.append("Jockey Name", jockeyName)
+		.append("Jockey ID", jockeyId)
+		.append("Jockey Claim", jockeyWeightClaim)
+		.append("Trainer Name", trainerName)
+		.append("Trainer ID", trainerId)
+		.append("CDBF", entrantCDBF.toString())
 		.toString();
     }
 
