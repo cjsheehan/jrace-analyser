@@ -17,7 +17,7 @@ public class ConvertDistance {
     static Pattern pF = Pattern.compile("(\\d+)f *");
     static Pattern pY = Pattern.compile("(\\d+)y *");
 
-    public static double toYards(String distance) {
+    public static double toYards(String distance) throws IllegalArgumentException {
 	double yards = 0.0;
 	Matcher mMFY = pMFY.matcher(distance);
 	Matcher mMF = pMF.matcher(distance);
@@ -50,8 +50,10 @@ public class ConvertDistance {
 	} else if (mY.matches()) {
 	    yards = Integer.parseInt(mY.group(1));
 
+	} else {
+	    throw new IllegalArgumentException("distance is invalid - must at least 1 value for miles/furlongs/yards");
 	}
 
 	return yards;
     }
-}
+    }

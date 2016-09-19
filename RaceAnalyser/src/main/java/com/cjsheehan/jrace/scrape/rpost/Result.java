@@ -17,7 +17,7 @@ import com.cjsheehan.jrace.scrape.Scrape;
 import com.cjsheehan.jrace.scrape.ScrapeException;
 
 public class Result {
-    
+
     // core data
     private Date date;
     private String course;
@@ -32,21 +32,20 @@ public class Result {
     private String conditions;
     private String title;
     private List<CardEntrant> entrants;
-    
+
     // jsoup selectors
     private static final String COURSE_SELECT = "#mainwrapper > div > div > div.popUp > div.popUpHead.clearfix > div.leftColBig > h1";
     private static final String TIME_SELECT = "#mainwrapper > div > div > div.popUp > div.popUpHead.clearfix > div.leftColBig > h3 > span";
     private static final String DATE_SELECT = COURSE_SELECT;
     private static final String WIN_PRIZE_SELECT = "#mainwrapper > div > div > div.popUp > div.popUpHead.clearfix > div.leftColBig > ul > li:nth-child(2)";
     private static final String NUM_RUNNERS_SELECT = "#re_ > div.raceInfo > b:nth-child(1)";
-    private static final String DISTANCE_SELECT = "";
+    private static final String DISTANCE_SELECT = "#mainwrapper > div > div > div.popUp > div.popUpHead.clearfix > div.leftColBig > ul > li:nth-child(1)";
     private static final String GOING_SELECT = "";
     private static final String TITLE_SELECT = "";
     private static final String GRADE_SELECT = "";
     private static final String CONDITIONS_SELECT = "";
     private static final String ENTRANTS_SELECT = "";
-    
-    
+
     // pattern match
     static Pattern pGrade = Pattern.compile("(CLASS \\d{1})");
     static Pattern pCond = Pattern.compile("\\(.+\\) *\\((.+)\\)");
@@ -54,10 +53,11 @@ public class Result {
     static Pattern pCourse = Pattern.compile("^(.+) Result");
     static Pattern pDate = Pattern.compile("Result (.+)$");
     static Pattern pRunners = Pattern.compile("(\\d+) ran");
-    
+    static Pattern pParenth = Pattern.compile("\\((.+)\\)");
+    static Pattern pDistance = Pattern.compile("^.+\\) (.+?) ");
+
     private static final String DATE_FORMAT = "h:mm, dd MMM yyyy";
-    
-    
+
     public Result(Document doc) throws ScrapeException {
 	setRaceUrl(doc.location());
 	scrapeRaceId(doc);
@@ -66,23 +66,43 @@ public class Result {
 	scrapePrize(doc);
 	scrapeNumRunners(doc);
 	scrapeDistance(doc);
-//	scrapeGoing(doc);
-//	scrapeTitle(doc);
-//	scrapeGrade(doc);
-//	scrapeConditions(doc);
-//	scrapeEntrants(doc);
+	// scrapeGoing(doc);
+	// scrapeTitle(doc);
+	// scrapeGrade(doc);
+	// scrapeConditions(doc);
+	// scrapeEntrants(doc);
     }
-    
-//    private void scrapeDistance(Document doc) {
-//	// TODO Auto-generated method stub
-//	
-//    }
+
+    private void scrapeDistance(Document doc) throws ScrapeException {
+	// TODO : must handle edge case where actual
+	// distance is supplied in parentheses aswell
+	// as the common reported distance
+	try {
+	    String text = Scrape.text(doc, DISTANCE_SELECT);
+	    Matcher m = pDistance.matcher(text);
+	    String d = "";
+	    if (m.find()) {
+		try {
+		    d = m.group(1);
+		    Distance distance = new Distance(m.group(1));
+		    setDistance(distance);
+		} catch (IllegalArgumentException e) {
+		    throw new ScrapeException("Invalid distance param: " + d);
+		} catch (Exception e) {
+		    throw new ScrapeException("Distance", doc.toString(), NUM_RUNNERS_SELECT);
+		}
+	    }
+
+	} catch (ScrapeException e) {
+	    throw new ScrapeException("Distance", doc.toString(), DISTANCE_SELECT);
+	}
+    }
 
     private void scrapeNumRunners(Document doc) throws ScrapeException {
 	try {
 	    String runners = Scrape.text(doc, NUM_RUNNERS_SELECT);
 	    Matcher m = pRunners.matcher(runners);
-	    if(m.find()) {
+	    if (m.find()) {
 		try {
 		    int numRunners = Integer.parseInt(m.group(1));
 		    setNumRunners(numRunners);
@@ -93,37 +113,34 @@ public class Result {
 	} catch (Exception e) {
 	    throw new ScrapeException("Course", doc.toString(), NUM_RUNNERS_SELECT);
 	}
-	
+
     }
 
     private void scrapePrize(Document doc) throws ScrapeException {
- 	Element elem = doc.select(WIN_PRIZE_SELECT).first();
- 	String prize = "";
- 	double prizeVal = 0;
- 	Currency cur = Currency.GBP;
+	Element elem = doc.select(WIN_PRIZE_SELECT).first();
+	String prize = "";
+	double prizeVal = 0;
+	Currency cur = Currency.GBP;
 
- 	try {
- 	    if (elem != null) {
- 	        String[] prizeList = elem.ownText().split(", ");
- 	        prize = prizeList[0];
- 		if (prize.contains("€")) {
- 		    cur = Currency.EUR;
- 		} else if (prize.contains("$")) {
- 		    cur = Currency.USD;
- 		}
+	try {
+	    if (elem != null) {
+		String[] prizeList = elem.ownText().split(", ");
+		prize = prizeList[0];
+		if (prize.contains("€")) {
+		    cur = Currency.EUR;
+		} else if (prize.contains("$")) {
+		    cur = Currency.USD;
+		}
 
- 	        prize = prize.replace("£", "")
- 	        	.replace("€", "")
- 	        	.replace("$", "")
- 	        	.replace(",", "");
- 	        prizeVal = Double.parseDouble(prize);
- 	        setWinPrize(new Prize(prizeVal, cur));
- 	    }
- 	} catch (NumberFormatException e) {
- 	    throw new ScrapeException("Winners Prize", doc.toString(),  WIN_PRIZE_SELECT);
- 	}
-     }
-    
+		prize = prize.replace("£", "").replace("€", "").replace("$", "").replace(",", "");
+		prizeVal = Double.parseDouble(prize);
+		setWinPrize(new Prize(prizeVal, cur));
+	    }
+	} catch (NumberFormatException e) {
+	    throw new ScrapeException("Winners Prize", doc.toString(), WIN_PRIZE_SELECT);
+	}
+    }
+
     private void scrapeDate(Document doc) throws ScrapeException {
 	Element timeElem = doc.select(TIME_SELECT).first();
 	String time = null;
@@ -138,7 +155,7 @@ public class Result {
 	if (dateElem != null) {
 	    date = dateElem.ownText();
 	    Matcher m = pDate.matcher(date);
-	    if(m.find()) {
+	    if (m.find()) {
 		date = m.group(1);
 	    }
 	} else {
@@ -157,14 +174,14 @@ public class Result {
 	}
 
 	setDate(dt);
-	
+
     }
 
     private void scrapeCourse(Document doc) throws ScrapeException {
 	try {
 	    String course = Scrape.text(doc, COURSE_SELECT);
 	    Matcher m = pCourse.matcher(course);
-	    if(m.find()) {
+	    if (m.find()) {
 		setCourse(m.group(1));
 	    }
 	} catch (Exception e) {
@@ -175,7 +192,7 @@ public class Result {
     private void scrapeRaceId(Document doc) throws ScrapeException {
 	String url = doc.location();
 	Matcher m = pRaceId.matcher(url);
-	if(m.find()) {
+	if (m.find()) {
 	    int raceId;
 	    try {
 		raceId = Integer.parseInt(m.group(1));
@@ -187,163 +204,199 @@ public class Result {
 	    throw new ScrapeException("Race ID", url, "pattern: " + pRaceId.toString());
 	}
     }
-    
-    
 
     /**
      * @return the date
      */
     public Date getDate() {
-        return date;
+	return date;
     }
+
     /**
-     * @param date the date to set
+     * @param date
+     *            the date to set
      */
     public void setDate(Date date) {
-        this.date = date;
+	this.date = date;
     }
+
     /**
      * @return the course
      */
     public String getCourse() {
-        return course;
+	return course;
     }
+
     /**
-     * @param course the course to set
+     * @param course
+     *            the course to set
      */
     public void setCourse(String course) {
-        this.course = course;
+	this.course = course;
     }
+
     /**
      * @return the raceId
      */
     public int getRaceId() {
-        return raceId;
+	return raceId;
     }
+
     /**
-     * @param raceId the raceId to set
+     * @param raceId
+     *            the raceId to set
      */
     public void setRaceId(int raceId) {
-        this.raceId = raceId;
+	this.raceId = raceId;
     }
+
     /**
      * @return the raceUrl
      */
     public String getRaceUrl() {
-        return raceUrl;
+	return raceUrl;
     }
+
     /**
-     * @param raceUrl the raceUrl to set
+     * @param raceUrl
+     *            the raceUrl to set
      */
     public void setRaceUrl(String raceUrl) {
-        this.raceUrl = raceUrl;
+	this.raceUrl = raceUrl;
     }
+
     /**
      * @return the numRunners
      */
     public int getNumRunners() {
-        return numRunners;
+	return numRunners;
     }
+
     /**
-     * @param numRunners the numRunners to set
+     * @param numRunners
+     *            the numRunners to set
      */
     public void setNumRunners(int numRunners) {
-        this.numRunners = numRunners;
+	this.numRunners = numRunners;
     }
+
     /**
      * @return the distance
      */
     public Distance getDistance() {
-        return distance;
+	return distance;
     }
+
     /**
-     * @param distance the distance to set
+     * @param distance
+     *            the distance to set
      */
     public void setDistance(Distance distance) {
-        this.distance = distance;
+	this.distance = distance;
     }
+
     /**
      * @return the going
      */
     public String getGoing() {
-        return going;
+	return going;
     }
+
     /**
-     * @param going the going to set
+     * @param going
+     *            the going to set
      */
     public void setGoing(String going) {
-        this.going = going;
+	this.going = going;
     }
+
     /**
      * @return the prizes
      */
     public List<Double> getPrizes() {
-        return prizes;
+	return prizes;
     }
+
     /**
-     * @param prizes the prizes to set
+     * @param prizes
+     *            the prizes to set
      */
     public void setPrizes(List<Double> prizes) {
-        this.prizes = prizes;
+	this.prizes = prizes;
     }
+
     /**
      * @return the winPrize
      */
     public Prize getWinPrize() {
-        return winPrize;
+	return winPrize;
     }
+
     /**
-     * @param winPrize the winPrize to set
+     * @param winPrize
+     *            the winPrize to set
      */
     public void setWinPrize(Prize winPrize) {
-        this.winPrize = winPrize;
+	this.winPrize = winPrize;
     }
+
     /**
      * @return the grade
      */
     public String getGrade() {
-        return grade;
+	return grade;
     }
+
     /**
-     * @param grade the grade to set
+     * @param grade
+     *            the grade to set
      */
     public void setGrade(String grade) {
-        this.grade = grade;
+	this.grade = grade;
     }
+
     /**
      * @return the conditions
      */
     public String getConditions() {
-        return conditions;
+	return conditions;
     }
+
     /**
-     * @param conditions the conditions to set
+     * @param conditions
+     *            the conditions to set
      */
     public void setConditions(String conditions) {
-        this.conditions = conditions;
+	this.conditions = conditions;
     }
+
     /**
      * @return the title
      */
     public String getTitle() {
-        return title;
+	return title;
     }
+
     /**
-     * @param title the title to set
+     * @param title
+     *            the title to set
      */
     public void setTitle(String title) {
-        this.title = title;
+	this.title = title;
     }
+
     /**
      * @return the entrants
      */
     public List<CardEntrant> getEntrants() {
-        return entrants;
+	return entrants;
     }
+
     /**
-     * @param entrants the entrants to set
+     * @param entrants
+     *            the entrants to set
      */
     public void setEntrants(List<CardEntrant> entrants) {
-        this.entrants = entrants;
+	this.entrants = entrants;
     }
 }
