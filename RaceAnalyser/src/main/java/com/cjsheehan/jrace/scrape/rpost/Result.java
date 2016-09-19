@@ -40,7 +40,7 @@ public class Result {
     private static final String WIN_PRIZE_SELECT = "#mainwrapper > div > div > div.popUp > div.popUpHead.clearfix > div.leftColBig > ul > li:nth-child(2)";
     private static final String NUM_RUNNERS_SELECT = "#re_ > div.raceInfo > b:nth-child(1)";
     private static final String DISTANCE_SELECT = "#mainwrapper > div > div > div.popUp > div.popUpHead.clearfix > div.leftColBig > ul > li:nth-child(1)";
-    private static final String GOING_SELECT = "";
+    private static final String GOING_SELECT = DISTANCE_SELECT;
     private static final String TITLE_SELECT = "";
     private static final String GRADE_SELECT = "";
     private static final String CONDITIONS_SELECT = "";
@@ -55,6 +55,7 @@ public class Result {
     static Pattern pRunners = Pattern.compile("(\\d+) ran");
     static Pattern pParenth = Pattern.compile("\\((.+)\\)");
     static Pattern pDistance = Pattern.compile("^.+\\) (.+?) ");
+    static Pattern pGoing= Pattern.compile("^.+\\) .+? (.+)");
 
     private static final String DATE_FORMAT = "h:mm, dd MMM yyyy";
 
@@ -66,11 +67,23 @@ public class Result {
 	scrapePrize(doc);
 	scrapeNumRunners(doc);
 	scrapeDistance(doc);
-	// scrapeGoing(doc);
+	scrapeGoing(doc);
 	// scrapeTitle(doc);
 	// scrapeGrade(doc);
 	// scrapeConditions(doc);
 	// scrapeEntrants(doc);
+    }
+
+    private void scrapeGoing(Document doc) throws ScrapeException {
+	try {
+	    String text = Scrape.text(doc, GOING_SELECT);
+	    Matcher m = pGoing.matcher(text);
+	    if (m.find()) {
+		    setGoing(m.group(1));
+	    }
+	} catch (ScrapeException e) {
+	    throw new ScrapeException("Going", doc.toString(), DISTANCE_SELECT);
+	}
     }
 
     private void scrapeDistance(Document doc) throws ScrapeException {
@@ -89,7 +102,7 @@ public class Result {
 		} catch (IllegalArgumentException e) {
 		    throw new ScrapeException("Invalid distance param: " + d);
 		} catch (Exception e) {
-		    throw new ScrapeException("Distance", doc.toString(), NUM_RUNNERS_SELECT);
+		    throw new ScrapeException("Distance", doc.toString(), DISTANCE_SELECT);
 		}
 	    }
 
