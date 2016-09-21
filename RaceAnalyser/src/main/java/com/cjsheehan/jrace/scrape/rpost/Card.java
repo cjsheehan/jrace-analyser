@@ -74,17 +74,18 @@ public class Card {
     
 
     private void scrapeRaceId(Document doc) throws ScrapeException {
-	Matcher m = pRaceId.matcher(getRaceUrl());
+	String url = doc.location();
+	Matcher m = pRaceId.matcher(url);
 	if(m.find()) {
 	    int raceId;
 	    try {
 		raceId = Integer.parseInt(m.group(1));
 		setRaceId(raceId);
 	    } catch (NumberFormatException e) {
-		throw new ScrapeException("Race ID", getRaceUrl(), "pattern: " + pRaceId.toString());
+		throw new ScrapeException("Race ID", url, "pattern: " + pRaceId.toString());
 	    }
 	} else {
-	    throw new ScrapeException("Race ID", getRaceUrl(), "pattern: " + pRaceId.toString());
+	    throw new ScrapeException("Race ID", url, "pattern: " + pRaceId.toString());
 	}
     }
 
@@ -103,7 +104,7 @@ public class Card {
 	    String course = Scrape.text(doc, COURSE_SELECT);
 	    setCourse(course);
 	} catch (Exception e) {
-	    throw new ScrapeException("Going", doc.toString(), GOING_SELECT);
+	    throw new ScrapeException("Course", doc.toString(), COURSE_SELECT);
 	}
     }
     
@@ -195,7 +196,10 @@ public class Card {
 		    cur = Currency.USD;
 		}
 
-	        prize = prize.replace("£", "").replace("€", "").replace(",", "");
+	        prize = prize.replace("£", "")
+	        	.replace("€", "")
+	        	.replace("$", "")
+	        	.replace(",", "");
 	        prizeVal = Double.parseDouble(prize);
 	        setWinPrize(new Prize(prizeVal, cur));
 	    }
