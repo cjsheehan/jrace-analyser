@@ -1,9 +1,16 @@
 package com.cjsheehan.jrace.racing;
 
+import java.text.Normalizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ConvertDistance {
+    final static Logger log = LoggerFactory.getLogger(ConvertDistance.class);
+    
     // conversions
     static final int YDS_PER_MILE = 1760;
     static final int YDS_PER_FURLONG = 220;
@@ -16,8 +23,11 @@ public class ConvertDistance {
     static Pattern pFY = Pattern.compile("(\\d+)f *(\\d+)y");
     static Pattern pF = Pattern.compile("(\\d+)f *");
     static Pattern pY = Pattern.compile("(\\d+)y *");
+    static Pattern pWholeOnly = Pattern.compile("(\\d+)$");
+    static Pattern pWholeAndFrac = Pattern.compile("(\\d+)(\\d)/(\\d)$");
+    static Pattern pFracOnly = Pattern.compile("(\\d)/(\\d)$");
 
-    public static double toYards(String distance) throws IllegalArgumentException {
+    public static double toYards(String distance) {
 	double yards = 0.0;
 	Matcher mMFY = pMFY.matcher(distance);
 	Matcher mMF = pMF.matcher(distance);
@@ -56,4 +66,47 @@ public class ConvertDistance {
 
 	return yards;
     }
+    
+    public static double beatenToYards(String distance) {
+	
+	if (StringUtils.isBlank(distance)) {
+	    throw new IllegalArgumentException("distance cannot be null/blank");
+	}
+
+	double converted = 0.0;
+	if (distance.contentEquals("dh")) {
+	    converted = 0.0;
+	} else if (distance.contentEquals("nse")) {
+	    converted = 0.01;
+	} else if (distance.contentEquals("shd")) {
+	    converted = 0.1;
+	} else if (distance.contentEquals("hd")) {
+	    converted = 0.2;
+	} else if (distance.contentEquals("nk")) {
+	    converted = 0.3;
+	} else if (distance.contentEquals("dis")) {
+	    converted = 50.0;
+	} else {
+	    String normal = Normalizer.normalize(distance, Normalizer.Form.NFKD).replace("\u2044", "/");
+	    Matcher mFrac = pFracOnly.matcher(normal);
+	    Matcher mWhole = pWholeOnly.matcher(normal);
+	    Matcher mWholeAndFrac = pWholeAndFrac.matcher(normal);
+
+	    if (mWholeAndFrac.find()) {
+		double whole = Double.parseDouble(mWholeAndFrac.group(1));
+		double numerator = Double.parseDouble(mWholeAndFrac.group(2));
+		double denominator = Double.parseDouble(mWholeAndFrac.group(3));
+		converted = whole + numerator / denominator;
+	    } else if (mFrac.find()) {
+		double numerator = Double.parseDouble(mFrac.group(1));
+		double denominator = Double.parseDouble(mFrac.group(2));
+		converted = numerator / denominator;
+	    } else if (mWhole.find()) {
+		converted = Double.parseDouble(mWhole.group(1));
+	    } else {
+		throw new IllegalArgumentException("distance :" + distance + " is invalid format");
+	    }
+	}
+	return converted;
     }
+}
