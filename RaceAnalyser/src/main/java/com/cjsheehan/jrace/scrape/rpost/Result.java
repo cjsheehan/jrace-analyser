@@ -2,14 +2,17 @@ package com.cjsheehan.jrace.scrape.rpost;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import com.cjsheehan.jrace.racing.ConvertDistance;
 import com.cjsheehan.jrace.racing.Currency;
 import com.cjsheehan.jrace.racing.Distance;
 import com.cjsheehan.jrace.racing.Prize;
@@ -19,8 +22,8 @@ import com.cjsheehan.jrace.scrape.ScrapeException;
 public class Result {
 
     // core data
-    private Date date;
     private String course;
+    private Date date;
     private int raceId;
     private String raceUrl;
     private int numRunners;
@@ -31,7 +34,7 @@ public class Result {
     private String grade;
     private String conditions;
     private String title;
-    private List<CardEntrant> entrants;
+    private List<ResultEntrant> entrants;
 
     // jsoup selectors
     private static final String COURSE_SELECT = "#mainwrapper > div > div > div.popUp > div.popUpHead.clearfix > div.leftColBig > h1";
@@ -41,21 +44,23 @@ public class Result {
     private static final String NUM_RUNNERS_SELECT = "#re_ > div.raceInfo > b:nth-child(1)";
     private static final String DISTANCE_SELECT = "#mainwrapper > div > div > div.popUp > div.popUpHead.clearfix > div.leftColBig > ul > li:nth-child(1)";
     private static final String GOING_SELECT = DISTANCE_SELECT;
-    private static final String TITLE_SELECT = "";
-    private static final String GRADE_SELECT = "";
-    private static final String CONDITIONS_SELECT = "";
-    private static final String ENTRANTS_SELECT = "";
+    private static final String GRADE_SELECT = DISTANCE_SELECT;
+    private static final String CONDITIONS_SELECT = DISTANCE_SELECT;
+    private static final String TITLE_SELECT = "#mainwrapper > div > div > div.popUp > div.popUpHead.clearfix > div.leftColBig > h3";
+    private static final String ENTRANTS_SELECT = "#re_ > table > tbody";
+    private static final String SEPARATOR_SELECT = "tr > td.separator";
 
     // pattern match
-    static Pattern pGrade = Pattern.compile("(CLASS \\d{1})");
-    static Pattern pCond = Pattern.compile("\\(.+\\) *\\((.+)\\)");
+    static Pattern pGrade = Pattern.compile("(CLASS \\d{1})", Pattern.CASE_INSENSITIVE);
+    static Pattern pCond = Pattern.compile("\\((.+?yo.+?)\\)");
     static Pattern pRaceId = Pattern.compile("race_id[=_](\\d+)");
     static Pattern pCourse = Pattern.compile("^(.+) Result");
     static Pattern pDate = Pattern.compile("Result (.+)$");
     static Pattern pRunners = Pattern.compile("(\\d+) ran");
-    static Pattern pParenth = Pattern.compile("\\((.+)\\)");
+    static Pattern pParenth = Pattern.compile("\\((.+?)\\)");
     static Pattern pDistance = Pattern.compile("^.+\\) (.+?) ");
-    static Pattern pGoing= Pattern.compile("^.+\\) .+? (.+)");
+    static Pattern pGoing = Pattern.compile("^.+\\) .+? (.+)\\d*");
+    static Pattern pJumps = Pattern.compile("chase || hurdle", Pattern.CASE_INSENSITIVE);
 
     private static final String DATE_FORMAT = "h:mm, dd MMM yyyy";
 
@@ -68,10 +73,71 @@ public class Result {
 	scrapeNumRunners(doc);
 	scrapeDistance(doc);
 	scrapeGoing(doc);
-	// scrapeTitle(doc);
-	// scrapeGrade(doc);
-	// scrapeConditions(doc);
-	// scrapeEntrants(doc);
+	scrapeTitle(doc);
+	scrapeGrade(doc);
+	scrapeConditions(doc);
+	scrapeEntrants(doc);
+    }
+    
+    private void scrapeEntrants(Document doc) {
+	List<ResultEntrant> entrants = new ArrayList<>();
+	int numEntrants = ResultEntrant.countEntrants(doc);
+	for (int i = 0; i < numEntrants; i++) {
+		try {
+		    ResultEntrant entrant = new ResultEntrant(doc, i, this);
+		    entrants.add(entrant);
+		} catch (ScrapeException e) {
+		    e.printStackTrace();
+		}
+	}
+	setEntrants(entrants);
+    }
+
+    private void scrapeConditions(Document doc) throws ScrapeException {
+	    String text = null;
+	    try {
+		text = Scrape.text(doc, CONDITIONS_SELECT);
+	    } catch (ScrapeException e) {
+		throw new ScrapeException("Entry Conditions", doc.baseUri(), GRADE_SELECT);
+	    }
+	    
+	    Matcher m = pParenth.matcher(text);
+	    boolean found = false;
+	    while(m.find() && !found) {
+		if(m.group(1).contains("yo")) {
+		    setConditions(m.group(1));
+		    found = true;
+		}
+	    }
+	    
+	    if(!found) {
+		throw new ScrapeException("Failed to match Entry Conditions", text, pCond.toString());
+	    }
+    }
+
+    private void scrapeGrade(Document doc) throws ScrapeException {
+	    String text = null;
+	    try {
+		text = Scrape.text(doc, GRADE_SELECT);
+	    } catch (ScrapeException e) {
+		throw new ScrapeException("Grade", doc.baseUri(), GRADE_SELECT);
+	    }
+	    
+	    Matcher m = pGrade.matcher(text);
+	    if(m.find()) {
+		setGrade(m.group(1));
+	    } else {
+		throw new ScrapeException("Failed to match Grade in:" + text + ", with pattern : " + pGrade.toString());
+	    }
+    }
+
+    private void scrapeTitle(Document doc) throws ScrapeException {
+	Element elem = doc.select(TITLE_SELECT).first();
+	if (elem != null) {
+	    setTitle(elem.ownText());
+	} else {
+	    throw new ScrapeException("Title", doc.baseUri(), TITLE_SELECT);
+	}
     }
 
     private void scrapeGoing(Document doc) throws ScrapeException {
@@ -79,10 +145,10 @@ public class Result {
 	    String text = Scrape.text(doc, GOING_SELECT);
 	    Matcher m = pGoing.matcher(text);
 	    if (m.find()) {
-		    setGoing(m.group(1));
+		setGoing(m.group(1));
 	    }
 	} catch (ScrapeException e) {
-	    throw new ScrapeException("Going", doc.toString(), DISTANCE_SELECT);
+	    throw new ScrapeException("Going", doc.baseUri(), DISTANCE_SELECT);
 	}
     }
 
@@ -90,9 +156,28 @@ public class Result {
 	// TODO : must handle edge case where actual
 	// distance is supplied in parentheses aswell
 	// as the common reported distance
-	try {
-	    String text = Scrape.text(doc, DISTANCE_SELECT);
-	    Matcher m = pDistance.matcher(text);
+	String text = Scrape.text(doc, DISTANCE_SELECT);
+	
+	// try edge case first where distance is supplied in both
+	// parentheses and as a race distance. e.g.
+	// (Class 1) (7yo+) (4m2f74y) 4m2½f 
+	
+	Matcher m = pParenth.matcher(text);
+	boolean found = false;
+	while(m.find() && !found) {
+	    if(ConvertDistance.isValid(m.group(1))) {
+		setDistance(new Distance(m.group(1)));
+		found = true;
+	    }
+	}
+	
+	// If not found, try standard case where race distance
+	// comes after conditions e.g.
+	// (Class 1) (7yo+) 4m2½f or // (Class 1) (7yo+) 4m2f 
+	// NOTE: there is possibility that distance will contain
+	// unicode vulgar fraction 
+	if(!found) {
+	    m = pDistance.matcher(text);
 	    String d = "";
 	    if (m.find()) {
 		try {
@@ -102,13 +187,11 @@ public class Result {
 		} catch (IllegalArgumentException e) {
 		    throw new ScrapeException("Invalid distance param: " + d);
 		} catch (Exception e) {
-		    throw new ScrapeException("Distance", doc.toString(), DISTANCE_SELECT);
+		    throw new ScrapeException("Distance", doc.baseUri(), DISTANCE_SELECT);
 		}
 	    }
-
-	} catch (ScrapeException e) {
-	    throw new ScrapeException("Distance", doc.toString(), DISTANCE_SELECT);
 	}
+
     }
 
     private void scrapeNumRunners(Document doc) throws ScrapeException {
@@ -120,11 +203,11 @@ public class Result {
 		    int numRunners = Integer.parseInt(m.group(1));
 		    setNumRunners(numRunners);
 		} catch (NumberFormatException e) {
-		    throw new ScrapeException("Number of Runners", doc.toString(), NUM_RUNNERS_SELECT);
+		    throw new ScrapeException("Number of Runners", doc.baseUri(), NUM_RUNNERS_SELECT);
 		}
 	    }
 	} catch (Exception e) {
-	    throw new ScrapeException("Course", doc.toString(), NUM_RUNNERS_SELECT);
+	    throw new ScrapeException("Course", doc.baseUri(), NUM_RUNNERS_SELECT);
 	}
 
     }
@@ -150,7 +233,7 @@ public class Result {
 		setWinPrize(new Prize(prizeVal, cur));
 	    }
 	} catch (NumberFormatException e) {
-	    throw new ScrapeException("Winners Prize", doc.toString(), WIN_PRIZE_SELECT);
+	    throw new ScrapeException("Winners Prize", doc.baseUri(), WIN_PRIZE_SELECT);
 	}
     }
 
@@ -160,7 +243,7 @@ public class Result {
 	if (timeElem != null) {
 	    time = timeElem.ownText();
 	} else {
-	    throw new ScrapeException("Time", doc.toString(), TIME_SELECT);
+	    throw new ScrapeException("Time", doc.baseUri(), TIME_SELECT);
 	}
 
 	Element dateElem = doc.select(DATE_SELECT).first();
@@ -172,7 +255,7 @@ public class Result {
 		date = m.group(1);
 	    }
 	} else {
-	    throw new ScrapeException("Date", doc.toString(), DATE_SELECT);
+	    throw new ScrapeException("Date", doc.baseUri(), DATE_SELECT);
 	}
 
 	Date dt = null;
@@ -183,7 +266,7 @@ public class Result {
 		throw new ScrapeException("Failed to parse date format");
 	    }
 	} else {
-	    throw new ScrapeException("Date/Time", doc.toString(), DATE_SELECT);
+	    throw new ScrapeException("Date/Time", doc.baseUri(), DATE_SELECT);
 	}
 
 	setDate(dt);
@@ -198,7 +281,7 @@ public class Result {
 		setCourse(m.group(1));
 	    }
 	} catch (Exception e) {
-	    throw new ScrapeException("Course", doc.toString(), COURSE_SELECT);
+	    throw new ScrapeException("Course", doc.baseUri(), COURSE_SELECT);
 	}
     }
 
@@ -215,6 +298,15 @@ public class Result {
 	    }
 	} else {
 	    throw new ScrapeException("Race ID", url, "pattern: " + pRaceId.toString());
+	}
+    }
+    
+    public boolean isFlat() {
+	Matcher m = pJumps.matcher(getTitle());
+	if(m.find()) {
+	    return false;
+	} else {
+	    return true;
 	}
     }
 
@@ -401,7 +493,7 @@ public class Result {
     /**
      * @return the entrants
      */
-    public List<CardEntrant> getEntrants() {
+    public List<ResultEntrant> getEntrants() {
 	return entrants;
     }
 
@@ -409,7 +501,33 @@ public class Result {
      * @param entrants
      *            the entrants to set
      */
-    public void setEntrants(List<CardEntrant> entrants) {
+    public void setEntrants(List<ResultEntrant> entrants) {
 	this.entrants = entrants;
+    }
+    
+    public String toString() {
+	
+	StringBuilder entrants = new StringBuilder();
+	for(ResultEntrant e : getEntrants()) {
+	    entrants.append(e.toString() + "\n");
+	}
+	
+	return new ToStringBuilder(this)
+		.append("Course", getCourse())
+		.append("Date", getDate().toString())
+		.append("Race ID", getRaceId())
+		.append("Race URL", getRaceUrl())
+		.append("Runners", getNumRunners())
+		.append("Distance", getDistance())
+		.append("Going", getGoing())
+		.append("Winning Prize", getWinPrize())
+		.append("Grade", getGrade())
+		.append("Runners", getNumRunners())
+		.append("Conditions", getConditions())
+		.append("Title", getTitle())
+		.append("\n")
+		.append("Entrants", "\n" + entrants)
+		.append("\n")
+		.toString();
     }
 }
