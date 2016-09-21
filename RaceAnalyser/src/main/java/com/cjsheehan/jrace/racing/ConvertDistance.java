@@ -84,7 +84,7 @@ public class ConvertDistance {
 	    converted = 0.2;
 	} else if (distance.contentEquals("nk")) {
 	    converted = 0.3;
-	} else if (distance.contentEquals("dis")) {
+	} else if (distance.contentEquals("dis") || distance.contentEquals("dist")) {
 	    converted = 50.0;
 	} else {
 	    String normal = Normalizer.normalize(distance, Normalizer.Form.NFKD).replace("\u2044", "/");
@@ -108,5 +108,33 @@ public class ConvertDistance {
 	    }
 	}
 	return converted;
+    }
+    
+    public static boolean isValid(String distance) {
+	Matcher mMFY = pMFY.matcher(distance);
+	Matcher mMF = pMF.matcher(distance);
+	Matcher mMY = pMY.matcher(distance);
+	Matcher mM = pM.matcher(distance);
+	Matcher mFY = pFY.matcher(distance);
+	Matcher mF = pF.matcher(distance);
+	Matcher mY = pY.matcher(distance);
+
+	if (mMFY.matches()) {
+	    return true;
+	} else if (mMF.matches()) {
+	    return true;
+	} else if (mMY.matches()) {
+	    return true;
+	} else if (mM.matches()) {
+	    return true;
+	} else if (mFY.matches()) {
+	    return true;
+	} else if (mF.matches()) {
+	    return true;
+	} else if (mY.matches()) {
+	    return true;
+	} else {
+	    return false;
+	}
     }
 }
