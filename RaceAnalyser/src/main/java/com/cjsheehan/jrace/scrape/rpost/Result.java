@@ -28,7 +28,7 @@ public class Result {
     private String raceUrl;
     private int numRunners;
     private Distance distance;
-    private String going;
+    private Going going;
     private List<Double> prizes;
     private Prize winPrize;
     private String grade;
@@ -143,11 +143,9 @@ public class Result {
     private void scrapeGoing(Document doc) throws ScrapeException {
 	try {
 	    String text = Scrape.text(doc, GOING_SELECT);
-	    Matcher m = pGoing.matcher(text);
-	    if (m.find()) {
-		setGoing(m.group(1));
-	    }
-	} catch (ScrapeException e) {
+	    Going going = Going.parse(text);
+	    setGoing(going);
+	} catch (Exception e) {
 	    throw new ScrapeException("Going", doc.baseUri(), DISTANCE_SELECT);
 	}
     }
@@ -403,7 +401,7 @@ public class Result {
     /**
      * @return the going
      */
-    public String getGoing() {
+    public Going getGoing() {
 	return going;
     }
 
@@ -411,7 +409,7 @@ public class Result {
      * @param going
      *            the going to set
      */
-    public void setGoing(String going) {
+    public void setGoing(Going going) {
 	this.going = going;
     }
 
@@ -519,7 +517,7 @@ public class Result {
 		.append("Race URL", getRaceUrl())
 		.append("Runners", getNumRunners())
 		.append("Distance", getDistance())
-		.append("Going", getGoing())
+		.append("Going", getGoing().name())
 		.append("Winning Prize", getWinPrize())
 		.append("Grade", getGrade())
 		.append("Runners", getNumRunners())
