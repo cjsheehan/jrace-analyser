@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 public enum Going {
     FIRM, GOOD_TO_FIRM, GOOD, GOOD_TO_SOFT, YIELDING, YIELDING_TO_SOFT, SOFT, SOFT_TO_HEAVY, HEAVY;
     
-    private static Pattern pReduce = Pattern.compile("(.+) \\d+ (fences|h.+dles)", Pattern.CASE_INSENSITIVE);
+    private static Pattern pReduce = Pattern.compile("(.+) \\d+ (fences|h.*dles)", Pattern.CASE_INSENSITIVE);
     private static Pattern pFirm  = Pattern.compile("firm *(?![^(])", Pattern.CASE_INSENSITIVE);
     private static Pattern pGoodToFirm  = Pattern.compile("good to firm *(?![^(])", Pattern.CASE_INSENSITIVE);
     private static Pattern pGood  = Pattern.compile("good *(?![^(])", Pattern.CASE_INSENSITIVE);
