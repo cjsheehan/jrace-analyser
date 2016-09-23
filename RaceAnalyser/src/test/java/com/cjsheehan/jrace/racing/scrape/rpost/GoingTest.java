@@ -59,9 +59,14 @@ public class GoingTest extends TestCase {
 	String input = ") good to soft";
 	assertEquals(Going.GOOD_TO_SOFT, Going.parse(input));
     }
-    
+
     public void testParse_Yielding() {
-	String input = ") yielding ";
+	String input = "Yielding";
+	assertEquals(Going.YIELDING, Going.parse(input));
+    }
+    
+    public void testParse_YieldingWithTextBeforeAndAfter() {
+	String input = "(4yo) 2m Yielding 10 hdles ";
 	assertEquals(Going.YIELDING, Going.parse(input));
     }
     
