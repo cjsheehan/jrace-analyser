@@ -36,6 +36,7 @@ public class Result {
     private String title;
     private List<ResultEntrant> entrants;
 
+
     // jsoup selectors
     private static final String COURSE_SELECT = "#mainwrapper > div > div > div.popUp > div.popUpHead.clearfix > div.leftColBig > h1";
     private static final String TIME_SELECT = "#mainwrapper > div > div > div.popUp > div.popUpHead.clearfix > div.leftColBig > h3 > span";
@@ -49,6 +50,8 @@ public class Result {
     private static final String TITLE_SELECT = "#mainwrapper > div > div > div.popUp > div.popUpHead.clearfix > div.leftColBig > h3";
     private static final String ENTRANTS_SELECT = "#re_ > table > tbody";
     private static final String SEPARATOR_SELECT = "tr > td.separator";
+    
+    private static final String IS_IRISH = "(IRE)";
 
     // pattern match
     static Pattern pGrade = Pattern.compile("(CLASS \\d{1})", Pattern.CASE_INSENSITIVE);
@@ -74,7 +77,12 @@ public class Result {
 	scrapeDistance(doc);
 	scrapeGoing(doc);
 	scrapeTitle(doc);
-	scrapeGrade(doc);
+	if(!isIrish()) {
+	    // Races in Ireland do not use grading system
+	    scrapeGrade(doc);
+	} else {
+	    setGrade("N/A");
+	}
 	scrapeConditions(doc);
 	scrapeEntrants(doc);
     }
@@ -127,7 +135,7 @@ public class Result {
 	    if(m.find()) {
 		setGrade(m.group(1));
 	    } else {
-		throw new ScrapeException("Failed to match Grade in:" + text + ", with pattern : " + pGrade.toString());
+		throw new ScrapeException("Failed to match Grade in:" + text + ", with pattern : " + pGrade.toString() + ", with url: " + doc.baseUri());
 	    }
     }
 
@@ -305,6 +313,14 @@ public class Result {
 	    return false;
 	} else {
 	    return true;
+	}
+    }
+    
+    public boolean isIrish() {
+	if(getCourse().contains(IS_IRISH)) {
+	    return true;
+	} else {
+	    return false;
 	}
     }
 

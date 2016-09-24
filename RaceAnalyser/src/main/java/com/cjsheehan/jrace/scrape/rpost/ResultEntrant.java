@@ -42,6 +42,7 @@ public class ResultEntrant {
     
     // jsoup selectors
     private static final String HORSE_NAME_SELECT = "td:nth-child(4) > span > b > a";
+    private static final String HORSE_ID_SELECT = "tr:nth-child(2) > td:nth-child(4) > span > b > a";
     private static final String DRAW_SELECT = "tr:nth-child(2) > td.nowrap.noPad > span";
     private static final String NO_SELECT = "tr:nth-child(2) > td.nowrap.noPad > h3";
     private static final String WEIGHT_SELECT = "tr:nth-child(2) > td:nth-child(6) > span";
@@ -59,6 +60,7 @@ public class ResultEntrant {
     
     // rx patterns
     private static final Pattern pWeight = Pattern.compile("(\\d+-\\d+)");
+    private static final Pattern pHorseId = Pattern.compile("horse_id=(\\d+)");
     private static final Pattern pJockeyId = Pattern.compile("jockey_id=(\\d+)");
     private static final Pattern pTrainerId = Pattern.compile("trainer_id=(\\d+)");
     private static final Pattern pPrice = Pattern.compile("(\\d+/\\d+)");
@@ -88,11 +90,15 @@ public class ResultEntrant {
 	this.doc = doc;
 	Element entrant = entrants.get(entrantIdx);
 	scrapeHorseName(entrant);
+	scrapeHorseId(entrant);
 	scrapeWeight(entrant);
 	scrapeAge(entrant);
 	if(raceResult.isFlat()) {
 	    scrapeNo(entrant);
 	    scrapeDraw(entrant);
+	} else {
+	    setNo(-1);
+	    setDraw(-1);
 	}
 	
 	scrapeOr(entrant);
@@ -105,10 +111,27 @@ public class ResultEntrant {
 	scrapeResult(entrant); // position and runstate
 	scrapeDistanceBeaten(entrant);
 	calculateTotalDistanceBeaten(getFinishPosition());
-	
-	
     }
-       
+    
+    private void scrapeHorseId(Element entrant) throws ScrapeException {
+	String text = "";
+	try {
+	    Element selected = entrant.select(HORSE_ID_SELECT).first();
+	    text = selected.attr("href");
+
+	} catch (Exception e) {
+	    throw new ScrapeException("Horse ID", entrant.toString(), HORSE_ID_SELECT);
+	}
+
+	Matcher m = pHorseId.matcher(text);
+	if (m.find()) {
+	    int id = Integer.parseInt(m.group(1));
+	    setHorseId(id);
+	} else {
+	    throw new ScrapeException(String.format("Could not match %1 in text %2", pHorseId.toString(), text));
+	}
+    }
+
     private double[] createBeatenDistances(Document doc) {
 	Elements distances = doc.select(DISTANCE_BEAT_SELECT);
 	double[] sum = new double[distances.size()];
