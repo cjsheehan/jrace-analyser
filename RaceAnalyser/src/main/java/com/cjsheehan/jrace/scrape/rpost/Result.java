@@ -68,6 +68,10 @@ public class Result {
     private static final String DATE_FORMAT = "h:mm, dd MMM yyyy";
 
     public Result(Document doc) throws ScrapeException {
+	if(doc == null) {
+	    throw new IllegalArgumentException("Document doc cannot be null");
+	}
+	
 	setRaceUrl(doc.location());
 	scrapeRaceId(doc);
 	scrapeCourse(doc);
