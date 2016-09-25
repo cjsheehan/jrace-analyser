@@ -1,66 +1,70 @@
 package com.cjsheehan.jrace;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.lang.invoke.MethodHandles;
 
 import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.cjsheehan.jrace.scrape.Html;
 import com.cjsheehan.jrace.scrape.ScrapeException;
 import com.cjsheehan.jrace.scrape.rpost.Card;
 import com.cjsheehan.jrace.scrape.rpost.Result;
+import com.cjsheehan.jrace.scrape.rpost.RpUrlHandler;
+
+enum SCRAPE {CARD, RESULT};
+
 
 public class App {
-    static final String HTML_LOC = "./html";
-    
+    static final String HTML_LOC = "/html";
+    static final String REMOTE_RESULT_URL = "http://www.racingpost.com/horses/result_home.sd";
+    static final String REMOTE_CARD_URL = "http://www.racingpost.com/horses2/cards/card.sd";
+//    static int[] cardIds = {657619, 657991, 658295, 659557, 659807, 658422};
+    static int[] cardIds = {659557};
+    static int[] resultIds = {646160, 646834, 657619, 659125};
+    static SCRAPE scrape = SCRAPE.CARD;
+    static boolean useRemote = false;
+
     @SuppressWarnings("unused")
     public static void main(String[] args) {
-	final Logger log = LoggerFactory.getLogger(App.class);
- 
-	String remoteCardUrl = "http://www.racingpost.com/horses2/cards/card.sd?race_id=659479&r_date=2016-09-19";
-	String localCardUrl = "./html/card_race_id_657619.html";
-	
-	
-	String remoteResultUrl = "http://www.racingpost.com/horses/result_home.sd?race_id=642825&r_date=2016-04-09";
-	String[] remoteResultUrls = {
-		"http://www.racingpost.com/horses/result_home.sd?race_id=657920",
-		"http://www.racingpost.com/horses/result_home.sd?race_id=659125",
-		"http://www.racingpost.com/horses/result_home.sd?race_id=642825",
-		"http://www.racingpost.com/horses/result_home.sd?race_id=641994",
-		
-		};
-	
-	String localResultUrl = "./html/result_race_id_657619.html";
-	
-	File[] files = new File(HTML_LOC).listFiles();
-	List<String> localResultUrls = new ArrayList<>();
-	for (File file : files) {
-	    String name = file.getAbsolutePath();
-	    if (file.isFile() && name.contains("result_race_id")) {
-		localResultUrls.add(name);
-	    }
+	final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+	String[] urls = {};
+	RacingUrlHandler urlManager;
+	if(useRemote) {
+	    urlManager = new RpUrlHandler();
+	} else {
+	    urlManager = new LocalUrlHandler();
 	}
 	
-	List<String> urls = localResultUrls;
-	
+	if(scrape == SCRAPE.CARD) {
+	    urls = urlManager.createCardUrls(cardIds);
+	} else if(scrape == SCRAPE.RESULT) {
+	    urls = urlManager.createResultUrls(resultIds);
+	}
+    
 	for (String url : urls) {
 		Document doc = null;
 		try {
-		    doc = Html.toDocument(url);
-		    Result result = null;
-		    try {
-			result = new Result(doc);
-		    } catch (ScrapeException e) {
-			log.error("ERROR: doc.baseUri() + \n" + e.getMessage());
+		    doc = urlManager.requestDocument(url);
+		    
+		    if(scrape == SCRAPE.CARD) {
+			    Card card = null;
+			    try {
+				card = new Card(doc);
+				log.info(doc.baseUri() + "\n" + card.toString());
+			    } catch (ScrapeException e) {
+				log.error("doc.baseUri() + \n", e);
+			    }
+			    
+		    } else if(scrape == SCRAPE.RESULT) {
+			    Result result = null;
+			    try {
+				result = new Result(doc);
+				log.info(doc.baseUri() + "\n" + result.toString());
+			    } catch (ScrapeException e) {
+				log.error("doc.baseUri() + \n", e);
+			    }
 		    }
-		    
-		    log.info(doc.baseUri() + "\n" + result.toString());
-		    
-		} catch (IOException e) {
+		} catch (Exception e) {
 		    log.error(url + "\n" + e.getMessage());
 		}
 	}
