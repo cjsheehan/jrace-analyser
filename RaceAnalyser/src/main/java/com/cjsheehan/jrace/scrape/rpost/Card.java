@@ -1,5 +1,6 @@
 package com.cjsheehan.jrace.scrape.rpost;
 
+import java.lang.invoke.MethodHandles;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -12,6 +13,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.cjsheehan.jrace.racing.Currency;
 import com.cjsheehan.jrace.racing.Distance;
@@ -20,6 +23,7 @@ import com.cjsheehan.jrace.scrape.Scrape;
 import com.cjsheehan.jrace.scrape.ScrapeException;
 
 public class Card {
+    final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     
     // core data
     private Date date;
@@ -144,7 +148,7 @@ public class Card {
 		entrant = new CardEntrant(selected);
 		entrants.add(entrant);
 	    } catch (ScrapeException e) {
-		e.printStackTrace();
+		log.error("Failed to scrape entrant", e);
 	    }
 	}
 	
@@ -438,90 +442,6 @@ public class Card {
      */
     public static void setpCond(Pattern pCond) {
         Card.pCond = pCond;
-    }
-
-    /**
-     * @return the trackSelect
-     */
-    public static String getTrackSelect() {
-        return COURSE_SELECT;
-    }
-
-    /**
-     * @return the timeSelect
-     */
-    public static String getTimeSelect() {
-        return TIME_SELECT;
-    }
-
-    /**
-     * @return the dateSelect
-     */
-    public static String getDateSelect() {
-        return DATE_SELECT;
-    }
-
-    /**
-     * @return the winPrizeSelect
-     */
-    public static String getWinPrizeSelect() {
-        return WIN_PRIZE_SELECT;
-    }
-
-    /**
-     * @return the numRunnersSelect
-     */
-    public static String getNumRunnersSelect() {
-        return NUM_RUNNERS_SELECT;
-    }
-
-    /**
-     * @return the distanceSelect
-     */
-    public static String getDistanceSelect() {
-        return DISTANCE_SELECT;
-    }
-
-    /**
-     * @return the goingSelect
-     */
-    public static String getGoingSelect() {
-        return GOING_SELECT;
-    }
-
-    /**
-     * @return the titleSelect
-     */
-    public static String getTitleSelect() {
-        return TITLE_SELECT;
-    }
-
-    /**
-     * @return the gradeSelect
-     */
-    public static String getGradeSelect() {
-        return GRADE_SELECT;
-    }
-
-    /**
-     * @return the conditionsSelect
-     */
-    public static String getConditionsSelect() {
-        return CONDITIONS_SELECT;
-    }
-
-    /**
-     * @return the entrantsSelect
-     */
-    public static String getEntrantsSelect() {
-        return ENTRANTS_SELECT;
-    }
-
-    /**
-     * @return the dateFormat
-     */
-    public static String getDateFormat() {
-        return DATE_FORMAT;
     }
     
     public String toString() {
