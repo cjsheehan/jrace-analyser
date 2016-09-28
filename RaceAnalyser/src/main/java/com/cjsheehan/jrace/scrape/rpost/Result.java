@@ -82,9 +82,9 @@ public class Result {
 	scrapeGoing(doc);
 	scrapeTitle(doc);
 	if(!isIrish()) {
-	    // Races in Ireland do not use grading system
 	    scrapeGrade(doc);
 	} else {
+	    // Races in Ireland do not use grading system
 	    setGrade("N/A");
 	}
 	scrapeConditions(doc);
@@ -163,15 +163,11 @@ public class Result {
     }
 
     private void scrapeDistance(Document doc) throws ScrapeException {
-	// TODO : must handle edge case where actual
-	// distance is supplied in parentheses aswell
-	// as the common reported distance
 	String text = Scrape.text(doc, DISTANCE_SELECT);
 	
 	// try edge case first where distance is supplied in both
 	// parentheses and as a race distance. e.g.
 	// (Class 1) (7yo+) (4m2f74y) 4m2½f 
-	
 	Matcher m = pParenth.matcher(text);
 	boolean found = false;
 	while(m.find() && !found) {
@@ -181,7 +177,7 @@ public class Result {
 	    }
 	}
 	
-	// If not found, try standard case where race distance
+	// If edge case not found, try standard case where race distance
 	// comes after conditions e.g.
 	// (Class 1) (7yo+) 4m2½f or // (Class 1) (7yo+) 4m2f 
 	// NOTE: there is possibility that distance will contain
