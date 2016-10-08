@@ -1,245 +1,245 @@
 package com.cjsheehan.jrace.racing;
 
 public class Entrant {
-    private Horse horse;
-    private Jockey jockey;
-    private Trainer trainer;
-    private Race race;
-    private String weight;
-    private int weightClaim;
-    private Rating rating;
-    private int draw = -1;
-    private int entryNo;
-    private int age;
-    
-    // post race fields
-    private String performance;
-    private int finishPosition = -1;
-    private String startPrice;
-    
-    private EntryState runState;
-    
-    /**
-     * @param horse
-     * @param jockey
-     * @param trainer
-     * @param race
-     */
-    public Entrant(Horse horse, Jockey jockey, Trainer trainer, Race race) {
-	super();
-	this.horse = horse;
-	this.jockey = jockey;
-	this.trainer = trainer;
-	this.race = race;
-    }
+	private Horse horse;
+	private Jockey jockey;
+	private Trainer trainer;
+	private Race race;
+	private String weight;
+	private int weightClaim;
+	private Rating rating;
+	private int draw = -1;
+	private int entryNo;
+	private int age;
 
-    /**
-     * @return the horse
-     */
-    public Horse getHorse() {
-        return horse;
-    }
+	// post race fields
+	private String performance;
+	private int finishPosition = -1;
+	private String startPrice;
 
-    /**
-     * @param horse the horse to set
-     */
-    public void setHorse(Horse horse) {
-        this.horse = horse;
-    }
+	private EntryState runState;
 
-    /**
-     * @return the jockey
-     */
-    public Jockey getJockey() {
-        return jockey;
-    }
+	/**
+	 * @param horse
+	 * @param jockey
+	 * @param trainer
+	 * @param race
+	 */
+	public Entrant(Horse horse, Jockey jockey, Trainer trainer, Race race) {
+		super();
+		this.horse = horse;
+		this.jockey = jockey;
+		this.trainer = trainer;
+		this.race = race;
+	}
 
-    /**
-     * @param jockey the jockey to set
-     */
-    public void setJockey(Jockey jockey) {
-        this.jockey = jockey;
-    }
+	/**
+	 * @return the horse
+	 */
+	public Horse getHorse() {
+		return horse;
+	}
 
-    /**
-     * @return the trainer
-     */
-    public Trainer getTrainer() {
-        return trainer;
-    }
+	/**
+	 * @param horse
+	 *            the horse to set
+	 */
+	public void setHorse(Horse horse) {
+		this.horse = horse;
+	}
 
-    /**
-     * @param trainer the trainer to set
-     */
-    public void setTrainer(Trainer trainer) {
-        this.trainer = trainer;
-    }
+	/**
+	 * @return the jockey
+	 */
+	public Jockey getJockey() {
+		return jockey;
+	}
 
-    /**
-     * @return the race
-     */
-    public Race getRace() {
-        return race;
-    }
+	/**
+	 * @param jockey
+	 *            the jockey to set
+	 */
+	public void setJockey(Jockey jockey) {
+		this.jockey = jockey;
+	}
 
-    /**
-     * @param race the race to set
-     */
-    public void setRace(Race race) {
-        this.race = race;
-    }
+	/**
+	 * @return the trainer
+	 */
+	public Trainer getTrainer() {
+		return trainer;
+	}
 
-    /**
-     * @return the weight
-     */
-    public String getWeight() {
-        return weight;
-    }
+	/**
+	 * @param trainer
+	 *            the trainer to set
+	 */
+	public void setTrainer(Trainer trainer) {
+		this.trainer = trainer;
+	}
 
-    /**
-     * @param weight the weight to set
-     */
-    public void setWeight(String weight) {
-        this.weight = weight;
-    }
+	/**
+	 * @return the race
+	 */
+	public Race getRace() {
+		return race;
+	}
 
-    /**
-     * @return the weightClaim
-     */
-    public int getWeightClaim() {
-        return weightClaim;
-    }
+	/**
+	 * @param race
+	 *            the race to set
+	 */
+	public void setRace(Race race) {
+		this.race = race;
+	}
 
-    /**
-     * @param weightClaim the weightClaim to set
-     */
-    public void setWeightClaim(int weightClaim) {
-        this.weightClaim = weightClaim;
-    }
+	/**
+	 * @return the weight
+	 */
+	public String getWeight() {
+		return weight;
+	}
 
-    /**
-     * @return the officialRating
-     */
-    public int getOfficialRating() {
-        return officialRating;
-    }
+	/**
+	 * @param weight
+	 *            the weight to set
+	 */
+	public void setWeight(String weight) {
+		this.weight = weight;
+	}
 
-    /**
-     * @param officialRating the officialRating to set
-     */
-    public void setOfficialRating(int officialRating) {
-        this.officialRating = officialRating;
-    }
+	/**
+	 * @return the weightClaim
+	 */
+	public int getWeightClaim() {
+		return weightClaim;
+	}
 
-    /**
-     * @return the draw
-     */
-    public int getDraw() {
-        return draw;
-    }
+	/**
+	 * @param weightClaim
+	 *            the weightClaim to set
+	 */
+	public void setWeightClaim(int weightClaim) {
+		this.weightClaim = weightClaim;
+	}
 
-    /**
-     * @param draw the draw to set
-     */
-    public void setDraw(int draw) {
-        this.draw = draw;
-    }
+	/**
+	 * @return the draw
+	 */
+	public int getDraw() {
+		return draw;
+	}
 
-    /**
-     * @return the performance
-     */
-    public String getPerformance() {
-        return performance;
-    }
+	/**
+	 * @param draw
+	 *            the draw to set
+	 */
+	public void setDraw(int draw) {
+		this.draw = draw;
+	}
 
-    /**
-     * @param performance the performance to set
-     */
-    public void setPerformance(String performance) {
-        this.performance = performance;
-    }
+	/**
+	 * @return the performance
+	 */
+	public String getPerformance() {
+		return performance;
+	}
 
-    /**
-     * @return the finishPosition
-     */
-    public int getFinishPosition() {
-        return finishPosition;
-    }
+	/**
+	 * @param performance
+	 *            the performance to set
+	 */
+	public void setPerformance(String performance) {
+		this.performance = performance;
+	}
 
-    /**
-     * @param finishPosition the finishPosition to set
-     */
-    public void setFinishPosition(int finishPosition) {
-        this.finishPosition = finishPosition;
-    }
+	/**
+	 * @return the finishPosition
+	 */
+	public int getFinishPosition() {
+		return finishPosition;
+	}
 
-    /**
-     * @return the startPrice
-     */
-    public String getStartPrice() {
-        return startPrice;
-    }
+	/**
+	 * @param finishPosition
+	 *            the finishPosition to set
+	 */
+	public void setFinishPosition(int finishPosition) {
+		this.finishPosition = finishPosition;
+	}
 
-    /**
-     * @param startPrice the startPrice to set
-     */
-    public void setStartPrice(String startPrice) {
-        this.startPrice = startPrice;
-    }
+	/**
+	 * @return the startPrice
+	 */
+	public String getStartPrice() {
+		return startPrice;
+	}
 
-    /**
-     * @return the runState
-     */
-    public EntryState getRunState() {
-        return runState;
-    }
+	/**
+	 * @param startPrice
+	 *            the startPrice to set
+	 */
+	public void setStartPrice(String startPrice) {
+		this.startPrice = startPrice;
+	}
 
-    /**
-     * @param runState the runState to set
-     */
-    public void setRunState(EntryState runState) {
-        this.runState = runState;
-    }
+	/**
+	 * @return the runState
+	 */
+	public EntryState getRunState() {
+		return runState;
+	}
 
-    /**
-     * @return the entryNo
-     */
-    public int getEntryNo() {
-	return entryNo;
-    }
+	/**
+	 * @param runState
+	 *            the runState to set
+	 */
+	public void setRunState(EntryState runState) {
+		this.runState = runState;
+	}
 
-    /**
-     * @param entryNo the entryNo to set
-     */
-    public void setEntryNo(int entryNo) {
-	this.entryNo = entryNo;
-    }
+	/**
+	 * @return the entryNo
+	 */
+	public int getEntryNo() {
+		return entryNo;
+	}
 
-    /**
-     * @return the age
-     */
-    public int getAge() {
-	return age;
-    }
+	/**
+	 * @param entryNo
+	 *            the entryNo to set
+	 */
+	public void setEntryNo(int entryNo) {
+		this.entryNo = entryNo;
+	}
 
-    /**
-     * @param age the age to set
-     */
-    public void setAge(int age) {
-	this.age = age;
-    }
+	/**
+	 * @return the age
+	 */
+	public int getAge() {
+		return age;
+	}
 
-    /**
-     * @return the rating
-     */
-    public Rating getRating() {
-	return rating;
-    }
+	/**
+	 * @param age
+	 *            the age to set
+	 */
+	public void setAge(int age) {
+		this.age = age;
+	}
 
-    /**
-     * @param rating the rating to set
-     */
-    public void setRating(Rating rating) {
-	this.rating = rating;
-    }
+	/**
+	 * @return the rating
+	 */
+	public Rating getRating() {
+		return rating;
+	}
+
+	/**
+	 * @param rating
+	 *            the rating to set
+	 */
+	public void setRating(Rating rating) {
+		this.rating = rating;
+	}
 }

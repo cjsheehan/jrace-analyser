@@ -4,46 +4,48 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 public class Scrape {
-     
-    public static String text(Document doc, String selector)  throws ScrapeException {
-	Element selected = doc.select(selector).first();
-	String text = null;
-	if (selected != null) {
-	    text = selected.ownText();
-	} else {
-	    throw new ScrapeException("Could not scrape valid text from document with selector: " + selector);
+
+	public static String text(Document doc, String selector) throws ScrapeException {
+		Element selected = doc.select(selector).first();
+		String text = null;
+		if (selected != null) {
+			text = selected.ownText();
+		} else {
+			throw new ScrapeException("Could not scrape valid text from document with selector: " + selector);
+		}
+
+		return text;
 	}
-	
-	return text;
-    }
-    
-    
-    public static String text(Element root, String selector)  throws ScrapeException {
-	Element selected = root.select(selector).first();
-	String text = null;
-	if (selected != null) {
-	    text = selected.ownText();
-	} else {
-	    throw new ScrapeException("Could not scrape valid text from : \n" + root + "\n with selector : \n" + selector);
+
+	public static String text(Element root, String selector) throws ScrapeException {
+		Element selected = root.select(selector).first();
+		String text = null;
+		if (selected != null) {
+			text = selected.ownText();
+		} else {
+			throw new ScrapeException(
+					"Could not scrape valid text from : \n" + root + "\n with selector : \n" + selector);
+		}
+		return text;
 	}
-	return text;
-    }
-    
-    public static int integer(Element root, String selector) throws ScrapeException {
-	Element selected = root.select(selector).first();
-	int integer = 0;
-	if (selected != null) {
-	    String text = selected.ownText();
-	    try {
-		integer = Integer.parseInt(text);
-	    } catch (NumberFormatException e) {
-		throw new ScrapeException("Could not parse valid integer from root element with selector: " + selector + "from text : " + text);
-	    }
-	} else {
-	    throw new ScrapeException("Could not find element with selector: " + selector + "\n in :\n" + root.toString());
+
+	public static int integer(Element root, String selector) throws ScrapeException {
+		Element selected = root.select(selector).first();
+		int integer = 0;
+		if (selected != null) {
+			String text = selected.ownText();
+			try {
+				integer = Integer.parseInt(text);
+			} catch (NumberFormatException e) {
+				throw new ScrapeException("Could not parse valid integer from root element with selector: " + selector
+						+ "from text : " + text);
+			}
+		} else {
+			throw new ScrapeException(
+					"Could not find element with selector: " + selector + "\n in :\n" + root.toString());
+		}
+
+		return integer;
 	}
-	
-	return integer;
-    }
-    
+
 }
