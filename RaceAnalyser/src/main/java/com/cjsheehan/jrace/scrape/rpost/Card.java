@@ -33,7 +33,6 @@ public class Card {
     private int numRunners;
     private Distance distance;
     private String going;
-    private List<Double> prizes;
     private Prize winPrize;
     private String grade;
     private String conditions;
@@ -330,20 +329,6 @@ public class Card {
      */
     public void setGoing(String going) {
         this.going = going;
-    }
-
-    /**
-     * @return the prizes
-     */
-    public List<Double> getPrizes() {
-        return prizes;
-    }
-
-    /**
-     * @param prizes the prizes to set
-     */
-    public void setPrizes(List<Double> prizes) {
-        this.prizes = prizes;
     }
 
     /**
