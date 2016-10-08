@@ -7,8 +7,8 @@ import org.jsoup.helper.StringUtil;
 
 public class Weight {
 
-    static final int LBS_PER_STONE = 14;
-    static final Pattern pToLbs = Pattern.compile("^(\\d+)-(\\d+)$");
+    private static final int LBS_PER_STONE = 14;
+    private static final Pattern pToLbs = Pattern.compile("^(\\d+)-(\\d+)$");
     
     public static int toLbs(String weight) {
 	if(StringUtil.isBlank(weight)) {

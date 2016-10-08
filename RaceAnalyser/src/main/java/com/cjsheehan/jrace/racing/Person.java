@@ -2,27 +2,43 @@ package com.cjsheehan.jrace.racing;
 
 public abstract class Person {
     private String name;
-    private String url;
-
-    public Person(String name, String url) {
+    private Long id;
+    
+    /**
+     * @param name
+     */
+    public Person(String name) {
 	super();
-	this.setName(name);
-	this.setUrl(url);
-    }
-
-    public String getName() {
-	return name;
-    }
-
-    public void setName(String name) {
 	this.name = name;
     }
 
-    public String getUrl() {
-	return url;
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
     }
 
-    public void setUrl(String url) {
-	this.url = url;
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
     }
+
+    /**
+     * @return the id
+     */
+    public Long getId() {
+        return id;
+    }
+
+    /**
+     * @param id the id to set
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+
 }
