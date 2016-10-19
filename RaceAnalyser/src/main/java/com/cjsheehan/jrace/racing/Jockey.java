@@ -11,12 +11,12 @@ public class Jockey {
 	@Id
 	@GeneratedValue
 	@Column(name = "id")
-	private int id;
+	private Long id;
 	
 	@Column(name = "name")
 	private String name;
 
-	public Jockey() {
+	protected Jockey() {
 	}
 
 	/**
@@ -30,7 +30,7 @@ public class Jockey {
 	/**
 	 * @return the id
 	 */
-	public int getId() {
+	public Long getId() {
 		return id;
 	}
 
@@ -38,7 +38,7 @@ public class Jockey {
 	 * @param id
 	 *            the id to set
 	 */
-	public void setId(int id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

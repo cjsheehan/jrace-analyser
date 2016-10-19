@@ -10,6 +10,7 @@ public class Entrant {
 	@Column(name = "id")
 	private int id;
 
+	
 	private Horse horse;
 	private Jockey jockey;
 	private Trainer trainer;
