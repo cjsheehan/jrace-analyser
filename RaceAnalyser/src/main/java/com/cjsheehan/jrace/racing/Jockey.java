@@ -13,7 +13,7 @@ public class Jockey {
 	@Column(name = "id")
 	private Long id;
 	
-	@Column(name = "name")
+	@Column(name = "name", length = 60)
 	private String name;
 
 	protected Jockey() {

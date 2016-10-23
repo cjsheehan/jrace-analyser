@@ -1,33 +1,45 @@
 package com.cjsheehan.jrace;
 
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import java.lang.invoke.MethodHandles;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.stereotype.Component;
 
 import com.cjsheehan.jrace.racing.Jockey;
-import com.cjsheehan.jrace.racing.repository.JockeyDao;
+import com.cjsheehan.jrace.racing.repository.JockeyRepository;
+import com.cjsheehan.jrace.racing.repository.config.Profiles;
 
-@SpringBootApplication // same as @Configuration @EnableAutoConfiguration @ComponentScan
+@Component
 public class Persist {
+    final static Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
+    @Autowired
+    private JockeyRepository repository;
+
+    public static void main(String[] args) {
+	AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+	context.getEnvironment().setActiveProfiles(Profiles.APPLICATION);
+	context.register(com.cjsheehan.jrace.racing.repository.config.ApplicationContext.class);
+	context.refresh();
 	
-	public static void main(String[] args) {
-		JockeyDao jockeyDao = new JockeyDao();
-		Jockey j1 = new Jockey("Harold");
-		jockeyDao.create(j1);
-		
-		Jockey j2 = jockeyDao.find(1);
-		System.out.println("Jockey: " + j2.getName());
-		
-		jockeyDao.remove(1);
-		
+	Persist p = context.getBean(Persist.class);
+	p.start(args);
+    }
+
+    public void start(String[] args) {
+	try {
+
+	    Jockey j = new Jockey("Chris");
+	    repository.save(j);
+
+	} catch (BeansException e) {
+	    log.error("HELP", e);
+	} catch (Exception e) {
+	    log.error("HELP", e);
 	}
-
-//	private static void populateSampleData() {
-//		Session session = HibernateUtilities.getSessionFactory().openSession();
-//		session.beginTransaction();
-//		
-//
-//		
-//		session.getTransaction().commit();
-//		session.close();
-//	}
-
+    }
 }
