@@ -1,8 +1,12 @@
 package com.cjsheehan.jrace.racing;
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -14,9 +18,12 @@ public class Trainer {
 	
 	@Column(name = "name")
 	private String name;
-	/**
-	 * @param name
-	 */
+	
+	@Column(name = "entry")
+	@OneToMany(mappedBy="entry", cascade=CascadeType.ALL)
+	private List<Entry> entries;
+	
+	
 	public Trainer(String name) {
 		super();
 		this.name = name;
@@ -50,6 +57,20 @@ public class Trainer {
 	 */
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	/**
+	 * @return the entrants
+	 */
+	public List<Entry> getEntries() {
+		return entries;
+	}
+
+	/**
+	 * @param entrants the entrants to set
+	 */
+	public void setEntrants(List<Entry> entries) {
+		this.entries = entries;
 	}
 
 	public String toString() {

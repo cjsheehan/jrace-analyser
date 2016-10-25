@@ -15,31 +15,31 @@ import com.cjsheehan.jrace.racing.repository.config.Profiles;
 
 @Component
 public class Persist {
-    final static Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+	final static Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    @Autowired
-    private JockeyRepository repository;
+	@Autowired
+	private JockeyRepository repository;
 
-    public static void main(String[] args) {
-	AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
-	context.getEnvironment().setActiveProfiles(Profiles.APPLICATION);
-	context.register(com.cjsheehan.jrace.racing.repository.config.ApplicationContext.class);
-	context.refresh();
-	
-	Persist p = context.getBean(Persist.class);
-	p.start(args);
-    }
+	public static void main(String[] args) {
+		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+		context.getEnvironment().setActiveProfiles(Profiles.APPLICATION);
+		context.register(com.cjsheehan.jrace.racing.repository.config.ApplicationContext.class);
+		context.refresh();
 
-    public void start(String[] args) {
-	try {
-
-	    Jockey j = new Jockey("Chris");
-	    repository.save(j);
-
-	} catch (BeansException e) {
-	    log.error("HELP", e);
-	} catch (Exception e) {
-	    log.error("HELP", e);
+		Persist p = context.getBean(Persist.class);
+		p.start(args);
 	}
-    }
+
+	public void start(String[] args) {
+		try {
+
+			Jockey j = new Jockey("Chris");
+			repository.save(j);
+
+		} catch (BeansException e) {
+			log.error("HELP", e);
+		} catch (Exception e) {
+			log.error("HELP", e);
+		}
+	}
 }

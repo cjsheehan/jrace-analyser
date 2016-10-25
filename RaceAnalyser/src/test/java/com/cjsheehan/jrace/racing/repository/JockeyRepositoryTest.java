@@ -13,36 +13,36 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes=ApplicationContext.class)
+@ContextConfiguration(classes = ApplicationContext.class)
 public class JockeyRepositoryTest extends TestCase {
 
-    @Autowired
-    private JockeyRepository repository;
+	@Autowired
+	private JockeyRepository repository;
 
-    /**
-     * Create the test case
-     *
-     * @param testName
-     *            name of the test case
-     */
-    public JockeyRepositoryTest(String testName) {
-	super(testName);
-    }
+	/**
+	 * Create the test case
+	 *
+	 * @param testName
+	 *            name of the test case
+	 */
+	public JockeyRepositoryTest(String testName) {
+		super(testName);
+	}
 
-    /**
-     * @return the suite of tests being tested
-     */
-    public static Test suite() {
-	return new TestSuite(JockeyRepositoryTest.class);
-    }
+	/**
+	 * @return the suite of tests being tested
+	 */
+	public static Test suite() {
+		return new TestSuite(JockeyRepositoryTest.class);
+	}
 
-    public void testRepositoryShouldNotBeNull() {
-	assertNotNull(repository);
-    }
+	public void testRepositoryShouldNotBeNull() {
+		assertNotNull(repository);
+	}
 
-    public void testJockeyIsSavedToDb() {
-	Jockey j = new Jockey("Tom");
-	repository.save(j);
-	assertEquals(1, 2);
-    }
+	public void testJockeyIsSavedToDb() {
+		Jockey j = new Jockey("Tom");
+		repository.save(j);
+		assertEquals(1, 2);
+	}
 }

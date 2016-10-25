@@ -18,7 +18,7 @@ public class Race {
 	private String grade;
 	private String conditions;
 	private String title;
-	private List<Entrant> entrants;
+	private List<Entry> entrants;
 
 	/**
 	 * @param date
@@ -33,7 +33,7 @@ public class Race {
 	 * @param title
 	 */
 	public Race(Date date, String course, int numRunners, Distance distance, String going, List<Double> prizes,
-			Prize winPrize, String grade, String conditions, String title, List<Entrant> entrants) {
+			Prize winPrize, String grade, String conditions, String title, List<Entry> entrants) {
 		super();
 		setDate(date);
 		setCourse(course);
@@ -201,7 +201,7 @@ public class Race {
 	/**
 	 * @return the entrants
 	 */
-	public List<Entrant> getEntrants() {
+	public List<Entry> getEntrants() {
 		return entrants;
 	}
 
@@ -209,7 +209,7 @@ public class Race {
 	 * @param entrants
 	 *            the entrants to set
 	 */
-	public void setEntrants(List<Entrant> entrants) {
+	public void setEntrants(List<Entry> entrants) {
 		this.entrants = entrants;
 	}
 

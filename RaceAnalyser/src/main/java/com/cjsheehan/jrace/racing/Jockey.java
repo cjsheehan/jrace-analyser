@@ -1,11 +1,19 @@
 package com.cjsheehan.jrace.racing;
 
-import javax.persistence.*;
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @Entity
-@Table(name = "JOCKEYS")
+@Table(name = "JOCKEY")
 public class Jockey {
 
 	@Id
@@ -15,7 +23,11 @@ public class Jockey {
 	
 	@Column(name = "name", length = 60)
 	private String name;
-
+	
+	@Column(name = "entry")
+	@OneToMany(mappedBy="entry", cascade=CascadeType.ALL)
+	private List<Entry> entries;
+	
 	protected Jockey() {
 	}
 
@@ -55,6 +67,20 @@ public class Jockey {
 	 */
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	/**
+	 * @return the entrants
+	 */
+	public List<Entry> getEntries() {
+		return entries;
+	}
+
+	/**
+	 * @param entrants the entrants to set
+	 */
+	public void setEntrants(List<Entry> entries) {
+		this.entries = entries;
 	}
 
 	public String toString() {

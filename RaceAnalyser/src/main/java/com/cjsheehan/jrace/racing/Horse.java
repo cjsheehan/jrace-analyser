@@ -1,8 +1,13 @@
 package com.cjsheehan.jrace.racing;
 
+import java.util.List;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -12,12 +17,14 @@ public class Horse {
 	@Column(name = "id")
 	private int id;
 	
-	@Column(name = "name")
+	@Column(name = "name", length = 100)
 	private String name;
+	
+	@Column(name = "entry")
+	@OneToMany(mappedBy="entry", cascade=CascadeType.ALL)
+	private List<Entry> entries;
 
-	/**
-	 * @param name
-	 */
+
 	public Horse(String name) {
 		super();
 		this.name = name;
@@ -51,6 +58,20 @@ public class Horse {
 	 */
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	/**
+	 * @return the entrants
+	 */
+	public List<Entry> getEntries() {
+		return entries;
+	}
+
+	/**
+	 * @param entrants the entrants to set
+	 */
+	public void setEntrants(List<Entry> entries) {
+		this.entries = entries;
 	}
 
 	public String toString() {
