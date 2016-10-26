@@ -3,22 +3,58 @@ package com.cjsheehan.jrace.racing;
 import java.util.Date;
 import java.util.List;
 
-/**
- * @author Chris
- *
- */
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+@Entity
+@Table(name = "race")
 public class Race {
+
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name = "id")
+	private Long id;
+	
+	@Transient
 	private Date date;
+	
+	@Transient
 	private String course;
+	
+	@Transient
 	private int numRunners;
+	
+	@Transient
 	private Distance distance;
+	
+	@Transient
 	private String going;
+	
+	@Transient
 	private List<Double> prizes;
+	
+	@Transient
 	private Prize winPrize;
+	
+	@Transient
 	private String grade;
+	
+	@Transient
 	private String conditions;
+	
+	@Transient
 	private String title;
-	private List<Entry> entrants;
+	
+	@Column(name = "entry")
+	@OneToMany(mappedBy="race", cascade=CascadeType.ALL)
+	private List<Entry> entries;
 
 	/**
 	 * @param date
@@ -33,7 +69,7 @@ public class Race {
 	 * @param title
 	 */
 	public Race(Date date, String course, int numRunners, Distance distance, String going, List<Double> prizes,
-			Prize winPrize, String grade, String conditions, String title, List<Entry> entrants) {
+			Prize winPrize, String grade, String conditions, String title, List<Entry> entries) {
 		super();
 		setDate(date);
 		setCourse(course);
@@ -45,7 +81,24 @@ public class Race {
 		setGrade(grade);
 		setConditions(conditions);
 		setTitle(title);
-		setEntrants(entrants);
+		setEntries(entries);
+	}
+	
+	protected Race() {
+	}
+
+	/**
+	 * @return the id
+	 */
+	public Long getId() {
+		return id;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	/**
@@ -201,16 +254,16 @@ public class Race {
 	/**
 	 * @return the entrants
 	 */
-	public List<Entry> getEntrants() {
-		return entrants;
+	public List<Entry> getEntries() {
+		return entries;
 	}
 
 	/**
 	 * @param entrants
 	 *            the entrants to set
 	 */
-	public void setEntrants(List<Entry> entrants) {
-		this.entrants = entrants;
+	public void setEntries(List<Entry> entrants) {
+		this.entries = entrants;
 	}
 
 	@Override

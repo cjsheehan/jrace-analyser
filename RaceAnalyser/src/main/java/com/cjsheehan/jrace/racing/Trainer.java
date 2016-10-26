@@ -4,15 +4,20 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+@Entity
+@Table(name = "TRAINER")
 public class Trainer {
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name = "id")
 	private int id;
 	
@@ -20,7 +25,7 @@ public class Trainer {
 	private String name;
 	
 	@Column(name = "entry")
-	@OneToMany(mappedBy="entry", cascade=CascadeType.ALL)
+	@OneToMany(mappedBy="trainer", cascade=CascadeType.ALL)
 	private List<Entry> entries;
 	
 	

@@ -6,6 +6,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -13,11 +14,11 @@ import javax.persistence.Table;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @Entity
-@Table(name = "JOCKEY")
+@Table(name = "jockey")
 public class Jockey {
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name = "id")
 	private Long id;
 	
@@ -25,7 +26,7 @@ public class Jockey {
 	private String name;
 	
 	@Column(name = "entry")
-	@OneToMany(mappedBy="entry", cascade=CascadeType.ALL)
+	@OneToMany(mappedBy="jockey", cascade=CascadeType.ALL)
 	private List<Entry> entries;
 	
 	protected Jockey() {

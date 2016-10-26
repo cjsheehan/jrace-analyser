@@ -32,6 +32,8 @@ public class EntryRepositoryTest extends TestCase {
 	@Test
 	public void entryIsSavedToDb() {
 		Entry entry = new Entry(new Horse("Horse1"), new Jockey("Jockey1"), new Trainer("Trainer1"), null);
+		entry.setWeightClaim(3);
+//		entry.setWeightInLbs(150);
 		repository.save(entry);
 		assertEquals(1, 1);
 	}

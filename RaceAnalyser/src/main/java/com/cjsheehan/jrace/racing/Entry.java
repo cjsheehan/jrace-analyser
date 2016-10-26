@@ -2,43 +2,68 @@ package com.cjsheehan.jrace.racing;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
-@Table(name = "ENTRY")
+@Table(name = "entry")
 public class Entry {
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name = "id")
-	private int id;
+	private Long id;
 
-	@OneToMany(mappedBy = "horse", cascade = CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.ALL)
 	private Horse horse;
 
-	@OneToMany(mappedBy = "jockey", cascade = CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.ALL)
 	private Jockey jockey;
 
-	@OneToMany(mappedBy = "trainer", cascade = CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.ALL)
 	private Trainer trainer;
 
+	@ManyToOne(cascade = CascadeType.ALL)
 	private Race race;
-	private String weight;
-	private int weightClaim;
-	private Rating rating;
+	
+	@Column(name = "weight_in_lbs", nullable = false)
+	private int weightInLbs;
+	
+	@Column(name = "weight_claim", nullable = false)
+	private int weightClaim = 0;
+	
+	@Embedded
+	private Rating rating = new Rating();
+	
+	@Column(name = "draw")
 	private int draw = -1;
+	
+	@Column(name = "entry_number", nullable = false)
 	private int entryNo;
-	private int age;
+	
+	@Column(name = "age")
+	private int age = -1;
 
 	// post race fields
-	private String performance;
+	@Column(name = "race_performance", nullable = false)
+	private String performance = "";
+	
+	@Column(name = "finish_position")
 	private int finishPosition = -1;
-	private String startPrice;
+	
+	@Column(name = "start_price", nullable = false)
+	private String startPrice = "";
 
-	private EntryState runState;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "entry_state", nullable = false)
+	private EntryState entryState = EntryState.NOT_AVAILABLE;
 
 	/**
 	 * @param horse
@@ -55,7 +80,20 @@ public class Entry {
 	}
 
 	protected Entry() {
+	}
 
+	/**
+	 * @return the id
+	 */
+	public Long getId() {
+		return id;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	/**
@@ -121,16 +159,16 @@ public class Entry {
 	/**
 	 * @return the weight
 	 */
-	public String getWeight() {
-		return weight;
+	public int getWeightInLbs() {
+		return weightInLbs;
 	}
 
 	/**
 	 * @param weight
 	 *            the weight to set
 	 */
-	public void setWeight(String weight) {
-		this.weight = weight;
+	public void setWeightInLbs(int lbs) {
+		this.weightInLbs = lbs;
 	}
 
 	/**
@@ -209,18 +247,18 @@ public class Entry {
 	}
 
 	/**
-	 * @return the runState
+	 * @return the entryState
 	 */
-	public EntryState getRunState() {
-		return runState;
+	public EntryState getEntryState() {
+		return entryState;
 	}
 
 	/**
 	 * @param runState
-	 *            the runState to set
+	 *            the entryState to set
 	 */
-	public void setRunState(EntryState runState) {
-		this.runState = runState;
+	public void setEntryState(EntryState runState) {
+		this.entryState = runState;
 	}
 
 	/**

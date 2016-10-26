@@ -1,8 +1,18 @@
 package com.cjsheehan.jrace.racing;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+
+@Embeddable
 public class Rating {
+	
+	@Column(name = "official_rating", nullable = false)
 	private int officialRating;
+	
+	@Column(name = "rpost_rating", nullable = false)
 	private int rpRating;
+	
+	@Column(name = "topspeed_rating", nullable = false)
 	private int tsRating;
 
 	public Rating() {
@@ -10,7 +20,7 @@ public class Rating {
 		rpRating = -1;
 		tsRating = -1;
 	}
-
+	
 	/**
 	 * @param officialRating
 	 * @param rpRating
