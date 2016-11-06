@@ -11,15 +11,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 @Entity
-@Table(name = "entry")
+@Table(name = "race_entry")
 public class Entry {
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name = "id")
-	private Long id;
+	private long id;
 
 	@ManyToOne(cascade = CascadeType.ALL)
 	private Horse horse;
@@ -42,7 +40,10 @@ public class Entry {
 	@Embedded
 	private Rating rating = new Rating();
 	
-	@Column(name = "draw")
+	@Embedded
+	private Odds odds;
+	
+	@Column(name = "draw", nullable = false)
 	private int draw = -1;
 	
 	@Column(name = "entry_number", nullable = false)
@@ -66,16 +67,29 @@ public class Entry {
 	private EntryState entryState = EntryState.NOT_AVAILABLE;
 
 	/**
+	 * @param id
 	 * @param horse
 	 * @param jockey
 	 * @param trainer
+	 * @param odds
 	 * @param race
 	 */
-	public Entry(Horse horse, Jockey jockey, Trainer trainer, Race race) {
+	public Entry(long id, Horse horse, Jockey jockey, Trainer trainer, Odds odds, Race race) {
 		super();
+		
+		if(horse == null) {
+			throw new IllegalArgumentException("horse is null");
+		}
+		
+		if(trainer == null) {
+			throw new IllegalArgumentException("trainer is null");
+		}
+		
+		this.id = id;
 		this.horse = horse;
 		this.jockey = jockey;
 		this.trainer = trainer;
+		this.odds = odds;
 		this.race = race;
 	}
 
@@ -85,14 +99,14 @@ public class Entry {
 	/**
 	 * @return the id
 	 */
-	public Long getId() {
+	public long getId() {
 		return id;
 	}
 
 	/**
 	 * @param id the id to set
 	 */
-	public void setId(Long id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 

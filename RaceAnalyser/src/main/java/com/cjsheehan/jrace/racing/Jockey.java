@@ -18,9 +18,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 public class Jockey {
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name = "id")
-	private Long id;
+	private long id;
 	
 	@Column(name = "name", length = 60)
 	private String name;
@@ -35,15 +34,16 @@ public class Jockey {
 	/**
 	 * @param name
 	 */
-	public Jockey(String name) {
+	public Jockey(String name, long id) {
 		super();
 		this.name = name;
+		this.id = id;
 	}
 
 	/**
 	 * @return the id
 	 */
-	public Long getId() {
+	public long getId() {
 		return id;
 	}
 
@@ -51,7 +51,7 @@ public class Jockey {
 	 * @param id
 	 *            the id to set
 	 */
-	public void setId(Long id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 

@@ -33,7 +33,7 @@ public class Persist {
 	public void start(String[] args) {
 		try {
 
-			Jockey j = new Jockey("Chris");
+			Jockey j = new Jockey("Chris", 1);
 			repository.save(j);
 
 		} catch (BeansException e) {

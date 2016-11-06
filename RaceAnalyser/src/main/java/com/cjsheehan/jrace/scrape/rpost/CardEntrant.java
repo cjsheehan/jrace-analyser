@@ -10,26 +10,30 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.cjsheehan.jrace.racing.CDBF;
+import com.cjsheehan.jrace.racing.Jockey;
+import com.cjsheehan.jrace.racing.Rating;
+import com.cjsheehan.jrace.racing.Trainer;
 import com.cjsheehan.jrace.scrape.Scrape;
 import com.cjsheehan.jrace.scrape.ScrapeException;
 
 public class CardEntrant {
 	final Logger log = LoggerFactory.getLogger(CardEntrant.class);
-	private String weight;
-	private int or;
-	private int rpr;
-	private int ts;
-	private int age;
-	private int draw;
-	private int no;
+	
 	private String horseName;
-	private int lastRan;
 	private int horseId;
-	private String jockeyName;
-	private int jockeyId;
-	private int jockeyWeightClaim;
-	private String trainerName;
-	private int trainerId;
+	private int age;
+	private int no;
+	private String weight;
+	private int draw;
+
+	private Rating rating = new Rating();
+
+	private int lastRan;
+	
+	private Jockey jockey;
+	private Trainer trainer;
+
+	private int weightClaim;
 	private CDBF entrantCDBF;
 
 	// jsoup selectors
@@ -72,57 +76,69 @@ public class CardEntrant {
 		scrapeLastRan(entrant);
 		scrapeCDBF(entrant);
 		scrapeJockeyWeightClaim(entrant);
-		scrapeJockeyName(entrant);
-		scrapeJockeyId(entrant);
-		scrapeTrainerName(entrant);
-		scrapeTrainerId(entrant);
+		scrapeJockey(entrant);
+		scrapeTrainer(entrant);
 	}
 
-	private void scrapeTrainerId(Element elem) throws ScrapeException {
+	private long scrapeTrainerId(Element elem) throws ScrapeException {
+		long id = -1L;
 		try {
 			Element selected = elem.select(TRAINER_ID_SELECT).first();
 			String text = selected.attr("href");
 			Matcher m = pTrainerId.matcher(text);
 			if (m.find()) {
-				int id = Integer.parseInt(m.group(1));
-				setTrainerId(id);
+				id = Long.parseLong(m.group(1));
 			} else {
 				throw new ScrapeException(String.format("Could not match %1 in text %2", pTrainerId.toString(), text));
 			}
 		} catch (Exception e) {
 			throw new ScrapeException("Trainer ID", elem.toString(), TRAINER_ID_SELECT);
 		}
+		
+		return id;
 	}
 
-	private void scrapeTrainerName(Element elem) throws ScrapeException {
+	private String scrapeTrainerName(Element elem) throws ScrapeException {
 		try {
-			String name = Scrape.text(elem, TRAINER_NAME_SELECT);
-			setTrainerName(name);
+			return Scrape.text(elem, TRAINER_NAME_SELECT);
 		} catch (Exception e) {
 			throw new ScrapeException("Trainer Name", elem.toString(), TRAINER_NAME_SELECT);
 		}
 	}
 
-	private void scrapeJockeyId(Element elem) throws ScrapeException {
+	private void scrapeJockey(Element elem) throws ScrapeException {
+		long id = scrapeJockeyId(elem);
+		String name = scrapeJockeyName(elem);
+		jockey = new Jockey(name, id);
+	}
+	
+	private void scrapeTrainer(Element elem) throws ScrapeException {
+		long id = scrapeTrainerId(elem);
+		String name = scrapeTrainerName(elem);
+		trainer = new Trainer(name, id);
+	}
+	
+	private long scrapeJockeyId(Element elem) throws ScrapeException {
+		long id = -1L;
 		try {
 			Element selected = elem.select(JOCKEY_ID_SELECT).first();
 			String text = selected.attr("href");
 			Matcher m = pJockeyId.matcher(text);
 			if (m.find()) {
-				int id = Integer.parseInt(m.group(1));
-				setJockeyId(id);
+				id = Long.parseLong(m.group(1));
 			} else {
 				throw new ScrapeException(String.format("Could not match %1 in text %2", pJockeyId.toString(), text));
 			}
 		} catch (Exception e) {
 			throw new ScrapeException("Jockey ID", elem.toString(), JOCKEY_ID_SELECT);
 		}
+		
+		return id;
 	}
 
-	private void scrapeJockeyName(Element elem) throws ScrapeException {
+	private String scrapeJockeyName(Element elem) throws ScrapeException {
 		try {
-			String name = Scrape.text(elem, JOCKEY_NAME_SELECT);
-			setJockeyName(name);
+			return Scrape.text(elem, JOCKEY_NAME_SELECT);
 		} catch (Exception e) {
 			throw new ScrapeException("Jockey Name", elem.toString(), JOCKEY_NAME_SELECT);
 		}
@@ -228,9 +244,9 @@ public class CardEntrant {
 		try {
 			String rpr = Scrape.text(elem, RPR_SELECT);
 			if (rpr.equals("—")) {
-				setRpr(-1);
+				rating.setRpRating(Rating.NO_RATING);
 			} else {
-				setRpr(Integer.parseInt(rpr));
+				rating.setRpRating(Integer.parseInt(rpr));
 			}
 		} catch (Exception e) {
 			throw new ScrapeException("RPR", elem.toString(), RPR_SELECT);
@@ -242,9 +258,9 @@ public class CardEntrant {
 		try {
 			String or = Scrape.text(elem, OR_SELECT);
 			if (or.equals("—")) {
-				setOr(-1);
+				rating.setOfficialRating(Rating.NO_RATING);
 			} else {
-				setOr(Integer.parseInt(or));
+				rating.setOfficialRating(Integer.parseInt(or));
 			}
 		} catch (Exception e) {
 			throw new ScrapeException("OR", elem.toString(), OR_SELECT);
@@ -256,9 +272,9 @@ public class CardEntrant {
 		try {
 			String ts = Scrape.text(elem, TS_SELECT);
 			if (ts.equals("—")) {
-				setTs(-1);
+				rating.setTsRating(Rating.NO_RATING);
 			} else {
-				setTs(Integer.parseInt(ts));
+				rating.setTsRating(Integer.parseInt(ts));
 			}
 		} catch (Exception e) {
 			throw new ScrapeException("TS", elem.toString(), TS_SELECT);
@@ -288,51 +304,6 @@ public class CardEntrant {
 	 */
 	public void setWeight(String weight) {
 		this.weight = weight;
-	}
-
-	/**
-	 * @return the or
-	 */
-	public int getOr() {
-		return or;
-	}
-
-	/**
-	 * @param or
-	 *            the or to set
-	 */
-	public void setOr(int or) {
-		this.or = or;
-	}
-
-	/**
-	 * @return the rpr
-	 */
-	public int getRpr() {
-		return rpr;
-	}
-
-	/**
-	 * @param rpr
-	 *            the rpr to set
-	 */
-	public void setRpr(int rpr) {
-		this.rpr = rpr;
-	}
-
-	/**
-	 * @return the ts
-	 */
-	public int getTs() {
-		return ts;
-	}
-
-	/**
-	 * @param ts
-	 *            the ts to set
-	 */
-	public void setTs(int ts) {
-		this.ts = ts;
 	}
 
 	/**
@@ -411,66 +382,6 @@ public class CardEntrant {
 	}
 
 	/**
-	 * @return the jockeyName
-	 */
-	public String getJockeyName() {
-		return jockeyName;
-	}
-
-	/**
-	 * @param jockeyName
-	 *            the jockeyName to set
-	 */
-	public void setJockeyName(String jockeyName) {
-		this.jockeyName = jockeyName;
-	}
-
-	/**
-	 * @return the jockeyId
-	 */
-	public int getJockeyId() {
-		return jockeyId;
-	}
-
-	/**
-	 * @param jockeyId
-	 *            the jockeyId to set
-	 */
-	public void setJockeyId(int jockeyId) {
-		this.jockeyId = jockeyId;
-	}
-
-	/**
-	 * @return the trainerName
-	 */
-	public String getTrainerName() {
-		return trainerName;
-	}
-
-	/**
-	 * @param trainerName
-	 *            the trainerName to set
-	 */
-	public void setTrainerName(String trainerName) {
-		this.trainerName = trainerName;
-	}
-
-	/**
-	 * @return the trainerId
-	 */
-	public int getTrainerId() {
-		return trainerId;
-	}
-
-	/**
-	 * @param trainerId
-	 *            the trainerId to set
-	 */
-	public void setTrainerId(int trainerId) {
-		this.trainerId = trainerId;
-	}
-
-	/**
 	 * @return the lastRan
 	 */
 	public int getLastRan() {
@@ -497,7 +408,7 @@ public class CardEntrant {
 	 * @return the jockeyWeightClaim
 	 */
 	public int getJockeyWeightClaim() {
-		return jockeyWeightClaim;
+		return weightClaim;
 	}
 
 	/**
@@ -505,16 +416,17 @@ public class CardEntrant {
 	 *            the jockeyWeightClaim to set
 	 */
 	public void setJockeyWeightClaim(int jockeyWeightClaim) {
-		this.jockeyWeightClaim = jockeyWeightClaim;
+		this.weightClaim = jockeyWeightClaim;
 	}
 
 	@Override
 	public String toString() {
-		return new ToStringBuilder(this).append("Horse Name", horseName).append("Horse ID", horseId).append("Age", age)
-				.append("No.", no).append("Weight", weight).append("OR", or).append("TS", ts).append("RPR", rpr)
-				.append("Last Ran", lastRan).append("Jockey Name", jockeyName).append("Jockey ID", jockeyId)
-				.append("Jockey Claim", jockeyWeightClaim).append("Trainer Name", trainerName)
-				.append("Trainer ID", trainerId).append("CDBF", entrantCDBF.toString()).toString();
+		return new ToStringBuilder(this)
+				.append("Horse Name", horseName).append("Horse ID", horseId).append("Age", age)
+				.append("No.", no).append("Weight", weight).append("RATING", rating.toString())
+				.append("Last Ran", lastRan).append("Jockey", jockey.toString())
+				.append("Weight Claim", weightClaim).append("Trainer", trainer.toString())
+				.append("CDBF", entrantCDBF.toString()).toString();
 	}
 
 }

@@ -3,8 +3,12 @@ package com.cjsheehan.jrace.racing;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 @Embeddable
 public class Rating {
+	
+	public static final int NO_RATING = -1;
 	
 	@Column(name = "official_rating", nullable = false)
 	private int officialRating;
@@ -14,36 +18,41 @@ public class Rating {
 	
 	@Column(name = "topspeed_rating", nullable = false)
 	private int tsRating;
+	
+	@Column(name = "custom_rating", nullable = false)
+	private int customRating;
 
 	public Rating() {
-		officialRating = -1;
-		rpRating = -1;
-		tsRating = -1;
+		this.officialRating = NO_RATING;
+		this.rpRating = NO_RATING;
+		this.tsRating = NO_RATING;
+		this.customRating = NO_RATING;
 	}
-	
-	/**
-	 * @param officialRating
-	 * @param rpRating
-	 * @param tsRating
-	 */
-	public Rating(int officialRating, int rpRating, int tsRating) {
+
+	public Rating(int officialRating, int rpRating, int tsRating, int customRating) {
 		super();
 
-		if (officialRating < -1) {
-			throw new IllegalArgumentException("officialRating is < 0");
+		
+		if (officialRating < NO_RATING) {
+			throw new IllegalArgumentException("officialRating is < " + NO_RATING);
 		}
 
-		if (rpRating < -1) {
-			throw new IllegalArgumentException("rpRating is < 0");
+		if (rpRating < NO_RATING) {
+			throw new IllegalArgumentException("rpRating is <  " + NO_RATING);
 		}
 
-		if (tsRating < -1) {
-			throw new IllegalArgumentException("tsRating is < 0");
+		if (tsRating < NO_RATING) {
+			throw new IllegalArgumentException("tsRating is <  " + NO_RATING);
+		}
+		
+		if (customRating < NO_RATING) {
+			throw new IllegalArgumentException("customRating is <  " + NO_RATING);
 		}
 
 		this.officialRating = officialRating;
 		this.rpRating = rpRating;
 		this.tsRating = tsRating;
+		this.customRating = customRating;
 	}
 
 	/**
@@ -89,5 +98,29 @@ public class Rating {
 	 */
 	public void setTsRating(int tsRating) {
 		this.tsRating = tsRating;
+	}
+
+	/**
+	 * @return the customRating
+	 */
+	public int getCustomRating() {
+		return customRating;
+	}
+
+	/**
+	 * @param customRating the customRating to set
+	 */
+	public void setCustomRating(int customRating) {
+		this.customRating = customRating;
+	}
+	
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this)
+				.append("OR", officialRating)
+				.append("RPR", rpRating)
+				.append("TS", tsRating)
+				.append("CUSTOMR", customRating)
+				.toString();
 	}
 }

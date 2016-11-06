@@ -17,9 +17,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 @Table(name = "TRAINER")
 public class Trainer {
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name = "id")
-	private int id;
+	private long id;
 	
 	@Column(name = "name")
 	private String name;
@@ -28,16 +27,20 @@ public class Trainer {
 	@OneToMany(mappedBy="trainer", cascade=CascadeType.ALL)
 	private List<Entry> entries;
 	
+	protected Trainer() {
+	}
 	
-	public Trainer(String name) {
+	
+	public Trainer(String name, long id) {
 		super();
 		this.name = name;
+		this.id = id;
 	}
 
 	/**
 	 * @return the id
 	 */
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
@@ -45,7 +48,7 @@ public class Trainer {
 	 * @param id
 	 *            the id to set
 	 */
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 

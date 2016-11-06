@@ -59,33 +59,6 @@ class PersistenceContext {
 		return new HikariDataSource(dataSourceConfig);
 	}
 
-	// @Bean(destroyMethod = "close")
-	// DataSource dataSource() {
-	//
-	// HikariConfig dataSourceConfig = new HikariConfig();
-	// // BasicDataSource dataSource = new BasicDataSource();
-	// // log.info("ENV: " + env.toString());
-	// // String dbdriver =
-	// // env.getRequiredProperty(PROPERTY_NAME_DB_DRIVER_CLASS);
-	// // System.out.println("DBDRIVER: " + dbdriver);
-	//
-	// // db.driver=com.mysql.jdbc.Driver
-	// // db.url=
-	// // db.username=appuser
-	// // db.password=appuser
-	// //
-	//
-	// log.info("ENV: " + env.toString());
-	// dataSourceConfig.setDriverClassName(env.getProperty("db.driver"));
-	//// env.set
-	//// dataSourceConfig.setDriverClassName("com.mysql.jdbc.Driver");
-	// dataSourceConfig.setJdbcUrl("jdbc:mysql://localhost:3306/racing?useSSL=false");
-	// dataSourceConfig.setUsername("appuser");
-	// dataSourceConfig.setPassword("appuser");
-	//
-	// return new HikariDataSource(dataSourceConfig);
-	// }
-
 	@Bean
 	JpaTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
 		JpaTransactionManager transactionManager = new JpaTransactionManager();

@@ -18,9 +18,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 @Table(name = "HORSE")
 public class Horse {
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name = "id")
-	private int id;
+	private long id;
 	
 	@Column(name = "name", length = 100)
 	private String name;
@@ -28,17 +27,21 @@ public class Horse {
 	@Column(name = "entry")
 	@OneToMany(mappedBy="horse", cascade=CascadeType.ALL)
 	private List<Entry> entries;
+	
+	protected Horse() {
+	}
 
 
-	public Horse(String name) {
+	public Horse(String name, long id) {
 		super();
 		this.name = name;
+		this.id = id;
 	}
 
 	/**
 	 * @return the id
 	 */
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
@@ -46,7 +49,7 @@ public class Horse {
 	 * @param id
 	 *            the id to set
 	 */
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 

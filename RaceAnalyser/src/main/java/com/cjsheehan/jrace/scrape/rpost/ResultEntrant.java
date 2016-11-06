@@ -18,17 +18,21 @@ import com.cjsheehan.jrace.scrape.ScrapeException;
 
 public class ResultEntrant {
 	final Logger log = LoggerFactory.getLogger(ResultEntrant.class);
+	
 	private String horseName;
 	private int horseId;
 	private int age;
 	private int no;
 	private String weight;
-	private int or;
 	private int draw;
+
+	private int or;
 
 	private String jockeyName;
 	private int jockeyId;
+	
 	private int jockeyWeightClaim;
+	
 	private String trainerName;
 	private int trainerId;
 	private String performance;
