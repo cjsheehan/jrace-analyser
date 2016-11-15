@@ -64,7 +64,7 @@ public class Entry {
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "entry_state", nullable = false)
-	private EntryState entryState = EntryState.NOT_AVAILABLE;
+	private RunnerState entryState = RunnerState.NOT_AVAILABLE;
 
 	/**
 	 * @param id
@@ -263,7 +263,7 @@ public class Entry {
 	/**
 	 * @return the entryState
 	 */
-	public EntryState getEntryState() {
+	public RunnerState getEntryState() {
 		return entryState;
 	}
 
@@ -271,7 +271,7 @@ public class Entry {
 	 * @param runState
 	 *            the entryState to set
 	 */
-	public void setEntryState(EntryState runState) {
+	public void setEntryState(RunnerState runState) {
 		this.entryState = runState;
 	}
 

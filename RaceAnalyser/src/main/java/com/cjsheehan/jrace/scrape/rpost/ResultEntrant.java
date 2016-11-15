@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.cjsheehan.jrace.racing.ConvertDistance;
-import com.cjsheehan.jrace.racing.EntryState;
+import com.cjsheehan.jrace.racing.RunnerState;
 import com.cjsheehan.jrace.scrape.Scrape;
 import com.cjsheehan.jrace.scrape.ScrapeException;
 
@@ -40,7 +40,7 @@ public class ResultEntrant {
 	private double totalDistanceBeaten;
 	private int finishPosition;
 	private String startPrice;
-	private EntryState runState;
+	private RunnerState runState;
 	private Document doc;
 	private Result raceResult;
 
@@ -206,7 +206,7 @@ public class ResultEntrant {
 		int pos = -1;
 		try {
 			pos = Integer.parseInt(text);
-			setRunState(EntryState.FINISHED);
+			setRunState(RunnerState.FINISHED);
 		} catch (NumberFormatException e) {
 			// Horse is either 1st or did not finish/run
 		}
@@ -215,11 +215,11 @@ public class ResultEntrant {
 		if (pos < 1) {
 			// TODO: need data on other text cases from RP
 			if (text.equals("UR")) {
-				setRunState(EntryState.UNSEATED_RIDER);
+				setRunState(RunnerState.UNSEATED_RIDER);
 			} else if (text.equals("PU")) {
-				setRunState(EntryState.PULLED_UP);
+				setRunState(RunnerState.PULLED_UP);
 			} else if (text.equals("F")) {
-				setRunState(EntryState.FELL);
+				setRunState(RunnerState.FELL);
 			} else {
 				throw new ScrapeException("Entry Result", entrant.toString(), RACE_POSITION_SELECT);
 			}
@@ -620,11 +620,11 @@ public class ResultEntrant {
 		return log;
 	}
 
-	public EntryState getRunState() {
+	public RunnerState getRunState() {
 		return runState;
 	}
 
-	public void setRunState(EntryState state) {
+	public void setRunState(RunnerState state) {
 		this.runState = state;
 	}
 

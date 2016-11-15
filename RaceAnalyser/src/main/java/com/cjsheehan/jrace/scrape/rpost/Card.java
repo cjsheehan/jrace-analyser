@@ -26,9 +26,9 @@ public class Card {
 	final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 	// core data
+	private int raceId;
 	private Date date;
 	private String course;
-	private int raceId;
 	private String raceUrl;
 	private int numRunners;
 	private Distance distance;

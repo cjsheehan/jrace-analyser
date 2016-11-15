@@ -22,14 +22,13 @@ import com.cjsheehan.jrace.scrape.ScrapeException;
 public class Result {
 
 	// core data
-	private String course;
-	private Date date;
 	private int raceId;
+	private Date date;
+	private String course;
 	private String raceUrl;
 	private int numRunners;
 	private Distance distance;
 	private Going going;
-	private List<Double> prizes;
 	private Prize winPrize;
 	private String grade;
 	private String conditions;
