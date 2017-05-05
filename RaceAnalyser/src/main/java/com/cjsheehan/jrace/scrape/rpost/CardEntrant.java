@@ -8,6 +8,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import com.cjsheehan.jrace.racing.CDBF;
 import com.cjsheehan.jrace.racing.Jockey;
@@ -16,6 +17,7 @@ import com.cjsheehan.jrace.racing.Trainer;
 import com.cjsheehan.jrace.scrape.Scrape;
 import com.cjsheehan.jrace.scrape.ScrapeException;
 
+@Component
 public class CardEntrant {
 	final Logger log = LoggerFactory.getLogger(CardEntrant.class);
 	
@@ -64,21 +66,21 @@ public class CardEntrant {
 	private static final String COURSE = "c";
 	private static final String BEATEN_FAVOURITE = "bf";
 
-	public CardEntrant(Element entrant) throws ScrapeException {
-		scrapeHorseName(entrant);
-		scrapeWeight(entrant);
-		scrapeOr(entrant);
-		scrapeRpr(entrant);
-		scrapeTs(entrant);
-		scrapeNo(entrant);
-		scrapeAge(entrant);
-		scrapeDraw(entrant);
-		scrapeLastRan(entrant);
-		scrapeCDBF(entrant);
-		scrapeJockeyWeightClaim(entrant);
-		scrapeJockey(entrant);
-		scrapeTrainer(entrant);
-	}
+//	public CardEntrant(Element entrant) throws ScrapeException {
+//		scrapeHorseName(entrant);
+//		scrapeWeight(entrant);
+//		scrapeOr(entrant);
+//		scrapeRpr(entrant);
+//		scrapeTs(entrant);
+//		scrapeNo(entrant);
+//		scrapeAge(entrant);
+//		scrapeDraw(entrant);
+//		scrapeLastRan(entrant);
+//		scrapeCDBF(entrant);
+//		scrapeJockeyWeightClaim(entrant);
+//		scrapeJockey(entrant);
+//		scrapeTrainer(entrant);
+//	}
 
 	private long scrapeTrainerId(Element elem) throws ScrapeException {
 		long id = -1L;
@@ -243,7 +245,7 @@ public class CardEntrant {
 	private void scrapeRpr(Element elem) throws ScrapeException {
 		try {
 			String rpr = Scrape.text(elem, RPR_SELECT);
-			if (rpr.equals("—")) {
+			if (rpr.equals("ï¿½")) {
 				rating.setRpRating(Rating.NO_RATING);
 			} else {
 				rating.setRpRating(Integer.parseInt(rpr));
@@ -257,7 +259,7 @@ public class CardEntrant {
 
 		try {
 			String or = Scrape.text(elem, OR_SELECT);
-			if (or.equals("—")) {
+			if (or.equals("ï¿½")) {
 				rating.setOfficialRating(Rating.NO_RATING);
 			} else {
 				rating.setOfficialRating(Integer.parseInt(or));
@@ -271,7 +273,7 @@ public class CardEntrant {
 
 		try {
 			String ts = Scrape.text(elem, TS_SELECT);
-			if (ts.equals("—")) {
+			if (ts.equals("ï¿½")) {
 				rating.setTsRating(Rating.NO_RATING);
 			} else {
 				rating.setTsRating(Integer.parseInt(ts));

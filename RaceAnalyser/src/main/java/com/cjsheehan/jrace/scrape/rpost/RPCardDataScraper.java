@@ -3,23 +3,18 @@ package com.cjsheehan.jrace.scrape.rpost;
 import java.lang.invoke.MethodHandles;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.cjsheehan.jrace.racing.Currency;
 import com.cjsheehan.jrace.racing.Distance;
-import com.cjsheehan.jrace.racing.Prize;
 import com.cjsheehan.jrace.scrape.CardDataScraper;
 import com.cjsheehan.jrace.scrape.Scrape;
 import com.cjsheehan.jrace.scrape.ScrapeException;
@@ -27,40 +22,8 @@ import com.cjsheehan.jrace.scrape.ScrapeException;
 @Component
 public class RPCardDataScraper implements CardDataScraper {
 	final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-
-	// core data
-	private int raceId;
-	private Date date;
-	private String course;
-	private String raceUrl;
-	private int numRunners;
-	private Distance distance;
-	private String going;
-	private Prize winPrize;
-	private String grade;
-	private String conditions;
-	private String title;
-	private List<CardEntrant> entrants;
-
-	// jsoup selectors
-	private static final String TIME_SELECT = "div.raceTitle span.navRace > span";
-	private static final String DATE_SELECT = "div.raceTitle span.placeRace > span.date";
-	private static final String WIN_PRIZE_SELECT = "div.raceInfo > ul > li:nth-child(1) > strong";
-	private static final String NUM_RUNNERS_SELECT = "div.raceInfo > ul > li:nth-child(2) > strong";
-	private static final String DISTANCE_SELECT = "div.raceInfo > ul > li:nth-child(3) > strong";
-	private static final String GOING_SELECT = "div.raceInfo > ul > li:nth-child(4) > strong";
-	private static final String TITLE_SELECT = "div.raceInfo > div > p > strong > strong";
-	private static final String GRADE_SELECT = "div.raceInfo > div > p";
-	private static final String CONDITIONS_SELECT = "div.raceInfo > div > p";
-	private static final String ENTRANTS_SELECT = "#sc_horseCard > tbody > tr.cr";
-
-	// pattern match
-	static Pattern gradePtrn = Pattern.compile("(CLASS \\d{1})");
-	static Pattern conditionsPtrn = Pattern.compile("\\(.+\\) *\\((.+)\\)");
-	static Pattern raceIdPtrn = Pattern.compile("race_id[=_](\\d+)");
-
+	private static Pattern raceIdPtrn = Pattern.compile("race_id[=_](\\d+)");
 	private static final String DATE_FORMAT = "hh:mm aa, dd MMMM yyyy";
-
 
 	@Override
 	public int scrapeRaceId(Document doc) throws ScrapeException {
@@ -68,7 +31,6 @@ public class RPCardDataScraper implements CardDataScraper {
 		int raceId;
 		Matcher m = raceIdPtrn.matcher(url);
 		if (m.find()) {
-
 			try {
 				raceId = Integer.parseInt(m.group(1));
 			} catch (NumberFormatException e) {
@@ -166,7 +128,7 @@ public class RPCardDataScraper implements CardDataScraper {
 		if (timeElem != null) {
 			time = timeElem.attr(timeAttr);
 		} else {
-			throw new ScrapeException("Time", doc.toString(), TIME_SELECT);
+			throw new ScrapeException("Time", doc.toString(), TIME_SELECTOR);
 		}
 
 
