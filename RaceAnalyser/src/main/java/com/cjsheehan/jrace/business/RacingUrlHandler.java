@@ -1,4 +1,4 @@
-package com.cjsheehan.jrace;
+package com.cjsheehan.jrace.business;
 
 import org.jsoup.nodes.Document;
 
@@ -11,5 +11,4 @@ public interface RacingUrlHandler {
 
 	public String[] createResultUrls(int[] ids);
 
-	public Document requestDocument(String url);
 }

@@ -1,23 +1,23 @@
-package com.cjsheehan.jrace.scrape.rpost;
+package com.cjsheehan.jrace.business;
 
 import java.lang.invoke.MethodHandles;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.cjsheehan.jrace.business.RacingUrlHandler;
-
-public class RpUrlHandler implements RacingUrlHandler {
+public class LocalUrlHandler implements RacingUrlHandler {
 	final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+	private static final String ROOT = "./html";
 
 	@Override
 	public String createCardUrl(int id) {
-		return Constants.CARD_URL + "?race_id=" + id;
+//		return ROOT + "/card_race_id_" + id + ".html";
+		return "card_race_id_" + id + ".html";
 	}
 
 	@Override
 	public String createResultUrl(int id) {
-		return Constants.RESULT_URL + "?race_id=" + id;
+		return ROOT + "/result_race_id_" + id + ".html";
 	}
 
 	@Override
@@ -37,5 +37,4 @@ public class RpUrlHandler implements RacingUrlHandler {
 		}
 		return urls;
 	}
-
 }

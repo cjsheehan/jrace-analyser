@@ -1,4 +1,4 @@
-package com.cjsheehan.jrace.racing.repository;
+package com.cjsheehan.jrace.scrape.rpost;
 
 import java.lang.invoke.MethodHandles;
 
@@ -16,26 +16,26 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.cjsheehan.jrace.business.JSoupLoader;
 import com.cjsheehan.jrace.business.LocalUrlHandler;
 import com.cjsheehan.jrace.business.RacingUrlHandler;
+import com.cjsheehan.jrace.racing.repository.RaceRepository;
 import com.cjsheehan.jrace.racing.repository.config.ApplicationContext;
 import com.cjsheehan.jrace.racing.repository.config.Profiles;
 import com.cjsheehan.jrace.scrape.ScrapeException;
-import com.cjsheehan.jrace.scrape.rpost.Result;
 
 import junit.framework.TestCase;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = ApplicationContext.class)
 @ActiveProfiles(Profiles.APPLICATION)
-public class RaceRepositoryTest extends TestCase {
+public class CardTest extends TestCase {
 
-	static int[] resultIds = { 6672154 };
+	static int[] resultIds = { 646160, 646834, 657619, 659125 };
 
 	@Autowired
 	private RaceRepository repository;
 	
 	@Autowired
 	@Qualifier("localDocumentProvider")
-	JSoupLoader docProvider;
+	private JSoupLoader docProvider;
 
 	@Test
 	public void repositoryShouldNotBeNull() {

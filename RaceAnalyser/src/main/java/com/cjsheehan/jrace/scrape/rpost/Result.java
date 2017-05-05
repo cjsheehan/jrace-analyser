@@ -34,6 +34,7 @@ public class Result {
 	private String conditions;
 	private String title;
 	private List<ResultEntrant> entrants;
+	private List<Double> prizes;
 
 	// jsoup selectors
 	private static final String COURSE_SELECT = "#mainwrapper > div > div > div.popUp > div.popUpHead.clearfix > div.leftColBig > h1";

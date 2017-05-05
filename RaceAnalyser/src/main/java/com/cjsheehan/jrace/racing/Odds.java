@@ -17,7 +17,7 @@ public class Odds {
 	@Column(name = "odds_denominator", nullable = false)
 	private int denominator;
 	
-	@Column(name = "odds_denominator", nullable = false)
+	@Column(name = "impliedProbability", nullable = false)
 	private double impliedProbability;
 
 	protected Odds() {

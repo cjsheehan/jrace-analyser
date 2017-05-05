@@ -5,9 +5,14 @@ import java.lang.invoke.MethodHandles;
 import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
+import com.cjsheehan.jrace.business.JSoupLoader;
+import com.cjsheehan.jrace.business.LocalUrlHandler;
+import com.cjsheehan.jrace.business.RacingUrlHandler;
 import com.cjsheehan.jrace.scrape.ScrapeException;
-import com.cjsheehan.jrace.scrape.rpost.Card;
+import com.cjsheehan.jrace.scrape.rpost.RPCardDataScraper;
 import com.cjsheehan.jrace.scrape.rpost.Result;
 import com.cjsheehan.jrace.scrape.rpost.RpUrlHandler;
 
@@ -24,6 +29,10 @@ public class App {
 	static int[] resultIds = { 646160, 646834, 657619, 659125 };
 	static SCRAPE scrape = SCRAPE.CARD;
 	static boolean useRemote = false;
+	
+	@Autowired
+	@Qualifier("localDocumentProvider")
+	static JSoupLoader docProvider;
 
 	@SuppressWarnings("unused")
 	public static void main(String[] args) {
@@ -45,16 +54,12 @@ public class App {
 		for (String url : urls) {
 			Document doc = null;
 			try {
-				doc = urlManager.requestDocument(url);
+				doc = docProvider.load(url);
 
 				if (scrape == SCRAPE.CARD) {
-					Card card = null;
-					try {
-						card = new Card(doc);
-						log.info(doc.baseUri() + "\n" + card.toString());
-					} catch (ScrapeException e) {
-						log.error("doc.baseUri() + \n", e);
-					}
+					RPCardDataScraper cds = null;
+					cds = new RPCardDataScraper();
+					log.info(doc.baseUri() + "\n" + cds.toString());
 
 				} else if (scrape == SCRAPE.RESULT) {
 					Result result = null;
