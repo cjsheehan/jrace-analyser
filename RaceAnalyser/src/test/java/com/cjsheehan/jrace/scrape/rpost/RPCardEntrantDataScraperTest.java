@@ -119,4 +119,11 @@ public class RPCardEntrantDataScraperTest extends TestCase {
 		assertEquals(expected.getTsRating(), actual.getTsRating());
 		assertEquals(expected.getCustomRating(), actual.getCustomRating());
 	}
+	
+	@Test
+	public void saddleNoIsScraped() throws ScrapeException {
+		int expected = 1;
+		int actual = ceds.scrapeSaddleNo(entrant);
+		assertEquals(expected, actual);
+	}
 }

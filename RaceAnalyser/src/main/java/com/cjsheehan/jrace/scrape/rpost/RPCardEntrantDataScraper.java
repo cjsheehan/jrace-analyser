@@ -105,8 +105,14 @@ public class RPCardEntrantDataScraper implements CardEntrantDataScraper {
 
 	@Override
 	public int scrapeSaddleNo(Element elem) throws ScrapeException {
-		// TODO Auto-generated method stub
-		return 0;
+		final String selector = "span.RC-runnerNumber__no";
+		int saddleNo;
+		try {
+			saddleNo = Scrape.integer(elem, selector);
+		} catch (Exception e) {
+			throw new ScrapeException("Saddle Number", elem.toString(), selector);
+		}
+		return saddleNo;
 	}
 
 	@Override
