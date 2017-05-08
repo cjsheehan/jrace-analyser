@@ -17,6 +17,7 @@ import com.cjsheehan.jrace.business.JSoupLoader;
 import com.cjsheehan.jrace.racing.Horse;
 import com.cjsheehan.jrace.racing.Jockey;
 import com.cjsheehan.jrace.racing.Trainer;
+import com.cjsheehan.jrace.racing.Weight;
 import com.cjsheehan.jrace.racing.repository.config.ApplicationContext;
 import com.cjsheehan.jrace.racing.repository.config.Profiles;
 import com.cjsheehan.jrace.scrape.CardEntrantDataScraper;
@@ -90,5 +91,20 @@ public class RPCardEntrantDataScraperTest extends TestCase {
 		Trainer actual = ceds.scrapeTrainer(entrant);
 		assertEquals(expected.getName(), actual.getName());
 		assertEquals(expected.getId(), actual.getId());
+	}
+	
+	@Test
+	public void weightIsScraped() throws ScrapeException {
+		Weight expected = new Weight(11, 12);
+		Weight actual = ceds.scrapeWeight(entrant);
+		assertEquals(expected.getStonesComponent(), actual.getStonesComponent());
+		assertEquals(expected.getLbsComponent(), actual.getLbsComponent());
+	}
+	
+	@Test
+	public void weightAllowanceIsScraped() throws ScrapeException {
+		int expected = 3;
+		int actual = ceds.scrapeWeightAllowance(entrant);
+		assertEquals(expected, actual);
 	}
 }

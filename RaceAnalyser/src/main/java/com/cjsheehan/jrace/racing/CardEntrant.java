@@ -4,7 +4,7 @@ public class CardEntrant {
 	private Horse horse;
 	private int age;
 	private int saddleNo;
-	private String weight;
+	private String weightCarried;
 	private int draw;
 	private Rating rating = new Rating();
 	private int lastRan;
@@ -54,13 +54,13 @@ public class CardEntrant {
 	 * @return the weight
 	 */
 	public String getWeight() {
-		return weight;
+		return weightCarried;
 	}
 	/**
 	 * @param weight the weight to set
 	 */
 	public void setWeight(String weight) {
-		this.weight = weight;
+		this.weightCarried = weight;
 	}
 	/**
 	 * @return the draw

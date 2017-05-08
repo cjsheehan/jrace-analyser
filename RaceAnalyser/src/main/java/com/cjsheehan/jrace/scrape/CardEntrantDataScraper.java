@@ -7,6 +7,7 @@ import com.cjsheehan.jrace.racing.Horse;
 import com.cjsheehan.jrace.racing.Jockey;
 import com.cjsheehan.jrace.racing.Rating;
 import com.cjsheehan.jrace.racing.Trainer;
+import com.cjsheehan.jrace.racing.Weight;
 
 @Component
 public interface CardEntrantDataScraper {
@@ -18,6 +19,6 @@ public interface CardEntrantDataScraper {
 	Rating scrapeRating(Element elem) throws ScrapeException;
 	int scrapeSaddleNo(Element elem) throws ScrapeException;
 	Trainer scrapeTrainer(Element elem) throws ScrapeException;
-	String scrapeWeight(Element elem) throws ScrapeException;
-	int weightClaim(Element elem) throws ScrapeException;
+	Weight scrapeWeight(Element elem) throws ScrapeException;
+	int scrapeWeightAllowance(Element elem) throws ScrapeException;
 }

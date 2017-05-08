@@ -14,6 +14,7 @@ import com.cjsheehan.jrace.racing.Horse;
 import com.cjsheehan.jrace.racing.Jockey;
 import com.cjsheehan.jrace.racing.Rating;
 import com.cjsheehan.jrace.racing.Trainer;
+import com.cjsheehan.jrace.racing.Weight;
 import com.cjsheehan.jrace.scrape.CardEntrantDataScraper;
 import com.cjsheehan.jrace.scrape.Scrape;
 import com.cjsheehan.jrace.scrape.ScrapeException;
@@ -126,15 +127,35 @@ public class RPCardEntrantDataScraper implements CardEntrantDataScraper {
 	}
 
 	@Override
-	public String scrapeWeight(Element elem) throws ScrapeException {
-		// TODO Auto-generated method stub
-		return null;
+	public Weight scrapeWeight(Element elem) throws ScrapeException {
+		final String stSelector = "span.RC-runnerWgt__carried_st";
+		String wgtSt;
+		try {
+			wgtSt = Scrape.text(elem, stSelector);
+		} catch (Exception e) {
+			throw new ScrapeException("Carried Weight St", elem.toString(), stSelector);
+		}
+		
+		final String lbSelector = "span.RC-runnerWgt__carried_lb";
+		String wtLbs;
+		try {
+			wtLbs = Scrape.text(elem, lbSelector);
+		} catch (Exception e) {
+			throw new ScrapeException("Carried Weight lbs", elem.toString(), lbSelector);
+		}
+		return new Weight(wgtSt + "-" + wtLbs);
 	}
 
 	@Override
-	public int weightClaim(Element elem) throws ScrapeException {
-		// TODO Auto-generated method stub
-		return 0;
+	public int scrapeWeightAllowance(Element elem) throws ScrapeException {
+		final String selector = "span[data-test-selector=RC-cardPage-runnerJockey-allowance]";
+		int allowance;
+		try {
+			allowance = Scrape.integer(elem, selector);
+		} catch (Exception e) {
+			throw new ScrapeException("Weight claim", elem.toString(), selector);
+		}
+		return allowance;
 	}
 	
 //	private String scrapeJockeyName(Element elem) throws ScrapeException {
