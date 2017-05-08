@@ -54,88 +54,44 @@ public class RPCardEntrantDataScraper implements CardEntrantDataScraper {
 
 	@Override
 	public Horse scrapeHorse(Element elem) throws ScrapeException {
-		String name = scrapeHorseName(elem);
-		long id = scrapeHorseId(elem);
-		return new Horse(name, id);
-	}
-	
-	private String scrapeHorseName(Element elem) throws ScrapeException {
-		String scraped = null;
 		final String selector = "a.RC-runnerName";
+		String name;
+		long id;
+		
 		try {
-			scraped = Scrape.text(elem, selector);
+			name = scrapeName(elem, selector);
 		} catch (Exception e) {
 			throw new ScrapeException("Horse Name", elem.toString(), selector);
 		}
-		return scraped;
-	}
-	
-	private long scrapeHorseId(Element elem) throws ScrapeException {
-		String url;
-		final String selector = "div.RC-runnerMainWrapper > a[href]";
-		Element selected = elem.select(selector).first();
+		
 		try {
-			url = selected.attr("href");
+			id = scrapeId(elem, selector);
 		} catch (Exception e) {
 			throw new ScrapeException("Horse ID", elem.toString(), selector);
 		}
-		
-		int id;
-		Matcher m = idPtrn.matcher(url);
-		if (m.find()) {
-			try {
-				id = Integer.parseInt(m.group(1));
-			} catch (NumberFormatException e) {
-				throw new ScrapeException("Horse ID", url, "pattern: " + idPtrn.toString());
-			}
-		} else {
-			throw new ScrapeException("Horse ID", url, "pattern: " + idPtrn.toString());
-		}
-		return id;
+		return new Horse(name, id);
 	}
 
 	@Override
 	public Jockey scrapeJockey(Element elem) throws ScrapeException {
-		String name = scrapeJockeyName(elem);
-		long id = scrapeJockeyId(elem);
-		return new Jockey(name, id);
-	}
-	
-	private String scrapeJockeyName(Element elem) throws ScrapeException {
-		String scraped = null;
 		final String selector = "div.RC-runnerInfo_jockey > a[href]";
+		String name;
+		long id; 
+		
 		try {
-			scraped = Scrape.text(elem, selector);
+			name = scrapeName(elem, selector);
 		} catch (Exception e) {
 			throw new ScrapeException("Jockey Name", elem.toString(), selector);
 		}
-		return scraped;
+		
+		try {
+			id = scrapeId(elem, selector);
+		} catch (Exception e) {
+			throw new ScrapeException("Jockey ID", elem.toString(), selector);
+		}
+		return new Jockey(name, id);
 	}
 	
-	private long scrapeJockeyId(Element elem) throws ScrapeException {
-		String url;
-		final String selector = "div.RC-runnerInfo_jockey > a[href]";
-		Element selected = elem.select(selector).first();
-		try {
-			url = selected.attr("href");
-		} catch (Exception e) {
-			throw new ScrapeException("Horse ID", elem.toString(), selector);
-		}
-		
-		int id;
-		Matcher m = idPtrn.matcher(url);
-		if (m.find()) {
-			try {
-				log.info("id = " + m.group(1));
-				id = Integer.parseInt(m.group(1));
-			} catch (NumberFormatException e) {
-				throw new ScrapeException("Jockey ID", url, "pattern: " + idPtrn.toString());
-			}
-		} else {
-			throw new ScrapeException("Jockey ID", url, "pattern: " + idPtrn.toString());
-		}
-		return id;
-	}
 
 	@Override
 	public Rating scrapeRating(Element elem) throws ScrapeException {
@@ -151,8 +107,22 @@ public class RPCardEntrantDataScraper implements CardEntrantDataScraper {
 
 	@Override
 	public Trainer scrapeTrainer(Element elem) throws ScrapeException {
-		// TODO Auto-generated method stub
-		return null;
+		final String selector = "div.RC-runnerInfo_trainer > a[href]";
+		String name;
+		long id; 
+		
+		try {
+			name = scrapeName(elem, selector);
+		} catch (Exception e) {
+			throw new ScrapeException("Jockey Name", elem.toString(), selector);
+		}
+		
+		try {
+			id = scrapeId(elem, selector);
+		} catch (Exception e) {
+			throw new ScrapeException("Jockey ID", elem.toString(), selector);
+		}
+		return new Trainer(name, id);
 	}
 
 	@Override
@@ -165,6 +135,48 @@ public class RPCardEntrantDataScraper implements CardEntrantDataScraper {
 	public int weightClaim(Element elem) throws ScrapeException {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+	
+//	private String scrapeJockeyName(Element elem) throws ScrapeException {
+//	String scraped = null;
+//	final String selector = "div.RC-runnerInfo_jockey > a[href]";
+//	try {
+//		scraped = Scrape.text(elem, selector);
+//	} catch (Exception e) {
+//		throw new ScrapeException("Jockey Name", elem.toString(), selector);
+//	}
+//	return scraped;
+//}
+//
+//private long scrapeJockeyId(Element elem) throws ScrapeException {
+//	final String selector = "div.RC-runnerInfo_jockey > a[href]";
+//	long id;
+//	try {
+//		id = scrapeId(elem, selector);
+//	} catch (Exception e) {
+//		throw new ScrapeException("Jockey ID", elem.toString(), selector);
+//	}
+//	return id;
+//}
+
+	
+	private long scrapeId(Element elem, String selector) throws ScrapeException {
+		String url;
+		Element selected = elem.select(selector).first();
+		url = selected.attr("href");
+		
+		int id;
+		Matcher m = idPtrn.matcher(url);
+		if (m.find()) {
+				id = Integer.parseInt(m.group(1));
+		} else {
+			throw new ScrapeException("Entity ID", url, "pattern: " + idPtrn.toString());
+		}
+		return id;
+	}
+	
+	private String scrapeName(Element elem, String selector) throws ScrapeException {
+		return Scrape.text(elem, selector);
 	}
 
 }

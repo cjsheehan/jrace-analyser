@@ -16,6 +16,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.cjsheehan.jrace.business.JSoupLoader;
 import com.cjsheehan.jrace.racing.Horse;
 import com.cjsheehan.jrace.racing.Jockey;
+import com.cjsheehan.jrace.racing.Trainer;
 import com.cjsheehan.jrace.racing.repository.config.ApplicationContext;
 import com.cjsheehan.jrace.racing.repository.config.Profiles;
 import com.cjsheehan.jrace.scrape.CardEntrantDataScraper;
@@ -79,6 +80,14 @@ public class RPCardEntrantDataScraperTest extends TestCase {
 	public void jockeyIsScraped() throws ScrapeException {
 		Jockey expected = new Jockey("Harry Skelton", 85218L);
 		Jockey actual = ceds.scrapeJockey(entrant);
+		assertEquals(expected.getName(), actual.getName());
+		assertEquals(expected.getId(), actual.getId());
+	}
+	
+	@Test
+	public void trainerIsScraped() throws ScrapeException {
+		Trainer expected = new Trainer("Dan Skelton", 16270L);
+		Trainer actual = ceds.scrapeTrainer(entrant);
 		assertEquals(expected.getName(), actual.getName());
 		assertEquals(expected.getId(), actual.getId());
 	}
