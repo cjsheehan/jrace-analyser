@@ -10,6 +10,8 @@ public class Rating {
 	
 	public static final int NO_RATING = -1;
 	
+	public enum Provider { OR, TS, RPR };
+	
 	@Column(name = "official_rating", nullable = false)
 	private int officialRating;
 	

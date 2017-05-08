@@ -16,6 +16,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.cjsheehan.jrace.business.JSoupLoader;
 import com.cjsheehan.jrace.racing.Horse;
 import com.cjsheehan.jrace.racing.Jockey;
+import com.cjsheehan.jrace.racing.Rating;
 import com.cjsheehan.jrace.racing.Trainer;
 import com.cjsheehan.jrace.racing.Weight;
 import com.cjsheehan.jrace.racing.repository.config.ApplicationContext;
@@ -34,6 +35,7 @@ public class RPCardEntrantDataScraperTest extends TestCase {
 	private static Document doc;
 	private static Element entrant;
 	private static int raceId = 6672154;
+	ApplicationContext context;
 	
 	@Autowired
 	@Qualifier("localJSoupLoader")
@@ -106,5 +108,15 @@ public class RPCardEntrantDataScraperTest extends TestCase {
 		int expected = 3;
 		int actual = ceds.scrapeWeightAllowance(entrant);
 		assertEquals(expected, actual);
+	}
+	
+	@Test
+	public void ratingIsScraped() throws ScrapeException {
+		Rating expected = new Rating(127, 133, 110, -1);
+		Rating actual = ceds.scrapeRating(entrant);
+		assertEquals(expected.getOfficialRating(), actual.getOfficialRating());
+		assertEquals(expected.getRpRating(), actual.getRpRating());
+		assertEquals(expected.getTsRating(), actual.getTsRating());
+		assertEquals(expected.getCustomRating(), actual.getCustomRating());
 	}
 }

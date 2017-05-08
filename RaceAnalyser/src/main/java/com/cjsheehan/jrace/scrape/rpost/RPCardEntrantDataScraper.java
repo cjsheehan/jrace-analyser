@@ -15,6 +15,7 @@ import com.cjsheehan.jrace.racing.Jockey;
 import com.cjsheehan.jrace.racing.Rating;
 import com.cjsheehan.jrace.racing.Trainer;
 import com.cjsheehan.jrace.racing.Weight;
+import com.cjsheehan.jrace.racing.Rating.Provider;
 import com.cjsheehan.jrace.scrape.CardEntrantDataScraper;
 import com.cjsheehan.jrace.scrape.Scrape;
 import com.cjsheehan.jrace.scrape.ScrapeException;
@@ -96,8 +97,10 @@ public class RPCardEntrantDataScraper implements CardEntrantDataScraper {
 
 	@Override
 	public Rating scrapeRating(Element elem) throws ScrapeException {
-		// TODO Auto-generated method stub
-		return null;
+		int ts = scrapeRating(elem, Provider.TS);
+		int rpr = scrapeRating(elem, Provider.RPR);
+		int or = scrapeRating(elem, Provider.OR);
+		return new Rating(or, rpr, ts, -1);
 	}
 
 	@Override
@@ -158,29 +161,6 @@ public class RPCardEntrantDataScraper implements CardEntrantDataScraper {
 		return allowance;
 	}
 	
-//	private String scrapeJockeyName(Element elem) throws ScrapeException {
-//	String scraped = null;
-//	final String selector = "div.RC-runnerInfo_jockey > a[href]";
-//	try {
-//		scraped = Scrape.text(elem, selector);
-//	} catch (Exception e) {
-//		throw new ScrapeException("Jockey Name", elem.toString(), selector);
-//	}
-//	return scraped;
-//}
-//
-//private long scrapeJockeyId(Element elem) throws ScrapeException {
-//	final String selector = "div.RC-runnerInfo_jockey > a[href]";
-//	long id;
-//	try {
-//		id = scrapeId(elem, selector);
-//	} catch (Exception e) {
-//		throw new ScrapeException("Jockey ID", elem.toString(), selector);
-//	}
-//	return id;
-//}
-
-	
 	private long scrapeId(Element elem, String selector) throws ScrapeException {
 		String url;
 		Element selected = elem.select(selector).first();
@@ -198,6 +178,41 @@ public class RPCardEntrantDataScraper implements CardEntrantDataScraper {
 	
 	private String scrapeName(Element elem, String selector) throws ScrapeException {
 		return Scrape.text(elem, selector);
+	}
+	
+	
+	private int scrapeRating(Element elem, Rating.Provider provider) throws ScrapeException {
+		String selector = "span.RC-runner";
+		switch (provider) {
+		case RPR:
+			selector = selector + "Rpr";
+			break;
+
+		case OR:
+			selector = selector + "Or";
+			break;
+
+		case TS:
+			selector = selector + "Ts";
+			break;
+
+		default:
+			break;
+		}
+
+		int rating;
+		String scraped;
+		try {
+			scraped = Scrape.text(elem, selector);
+			if(scraped == "-") {
+				return -1;
+			} else {
+				rating = Scrape.integer(elem, selector);
+			}
+		} catch (Exception e) {
+			throw new ScrapeException(provider.toString() + " Rating", elem.toString(), selector);
+		}
+		return rating;
 	}
 
 }

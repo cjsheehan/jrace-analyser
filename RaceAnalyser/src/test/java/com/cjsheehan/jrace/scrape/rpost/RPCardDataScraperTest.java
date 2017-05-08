@@ -16,7 +16,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.cjsheehan.jrace.business.JSoupLoader;
-import com.cjsheehan.jrace.racing.Distance;
 import com.cjsheehan.jrace.racing.repository.config.ApplicationContext;
 import com.cjsheehan.jrace.racing.repository.config.Profiles;
 import com.cjsheehan.jrace.scrape.CardDataScraper;
