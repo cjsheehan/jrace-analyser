@@ -6,9 +6,55 @@ import java.util.regex.Pattern;
 import org.jsoup.helper.StringUtil;
 
 public class Weight {
+	
+	private int stonesComponent = 0;
+	private int lbsComponent = 0;
 
 	private static final int LBS_PER_STONE = 14;
 	private static final Pattern pToLbs = Pattern.compile("^(\\d+)-(\\d+)$");
+	
+	public Weight(int st, int lbs) {
+		if(st < 0) throw new IllegalArgumentException("st < 0");
+		if(lbs < 0) throw new IllegalArgumentException("lbs < 0");
+		stonesComponent = st;
+		lbsComponent = lbs;
+	}
+	
+	public Weight(String weight) {
+		if(StringUtil.isBlank(weight)) throw new IllegalArgumentException("weight is blank/null");
+		int totalLbs = toLbs(weight);
+		setStonesComponent(totalLbs / LBS_PER_STONE);
+		setLbsComponent(totalLbs % LBS_PER_STONE);
+	}
+
+
+	/**
+	 * @return the stonesComponent
+	 */
+	public int getStonesComponent() {
+		return stonesComponent;
+	}
+
+	/**
+	 * @param stonesComponent the stonesComponent to set
+	 */
+	private void setStonesComponent(int stonesComponent) {
+		this.stonesComponent = stonesComponent;
+	}
+
+	/**
+	 * @return the lbsComponent
+	 */
+	public int getLbsComponent() {
+		return lbsComponent;
+	}
+
+	/**
+	 * @param lbsComponent the lbsComponent to set
+	 */
+	private void setLbsComponent(int lbsComponent) {
+		this.lbsComponent = lbsComponent;
+	}
 
 	public static int toLbs(String weight) {
 		if (StringUtil.isBlank(weight)) {

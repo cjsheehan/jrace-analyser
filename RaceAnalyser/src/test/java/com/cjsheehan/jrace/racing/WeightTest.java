@@ -21,6 +21,24 @@ public class WeightTest extends TestCase {
 	public static Test suite() {
 		return new TestSuite(WeightTest.class);
 	}
+	
+	public void testWeight_isInitialisedFromString() {
+		Weight actual = new Weight("10-4");
+		int expected = 10;
+		assertEquals(actual.getStonesComponent(), expected);
+		
+		expected = 4;
+		assertEquals(actual.getLbsComponent(), expected);
+	}
+	
+	public void testWeight_isInitialisedFromComponentParams() {
+		Weight actual = new Weight(10, 4);
+		int expected = 10;
+		assertEquals(actual.getStonesComponent(), expected);
+		
+		expected = 4;
+		assertEquals(actual.getLbsComponent(), expected);
+	}
 
 	public void testWeight_stAndLbsGt0_isConvertedToLbs() {
 		String weight = "10-4";
