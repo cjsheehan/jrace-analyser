@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import com.cjsheehan.jrace.racing.Distance;
 
 @Component
-public interface CardDataScraper {
+public interface RaceDataScraper {
 	int scrapeRaceId(Document doc) throws ScrapeException;
 	String scrapeCourse(Document doc) throws ScrapeException;
 	Date scrapeDate(Document doc) throws ScrapeException;

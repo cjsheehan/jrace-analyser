@@ -1,21 +1,16 @@
 package com.cjsheehan.jrace.scrape.rpost;
 
 import java.io.IOException;
-import java.lang.invoke.MethodHandles;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 
 import org.jsoup.nodes.Document;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -31,8 +26,7 @@ import junit.framework.TestCase;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = ApplicationContext.class)
 @ActiveProfiles(Profiles.INTEGRATION_TEST)
-public class RPCardDataScraperTest extends TestCase {
-	final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+public class RPResultDataScraperTest extends TestCase {
 
 	private static boolean setUpIsDone = false;
 	private static Document doc;
@@ -43,10 +37,9 @@ public class RPCardDataScraperTest extends TestCase {
 	private JSoupLoader docLoader;
 
 	@Autowired
-	@Qualifier("cardDataScraper")
+	@Qualifier("resultDataScraper")
 	private RaceDataScraper scraper;
 
-	
 	@Before
 	public void setUp() throws IOException {
 		if (setUpIsDone) {
@@ -54,7 +47,7 @@ public class RPCardDataScraperTest extends TestCase {
 		}
 
 		// do the setup
-		doc = docLoader.load("card_race_id_" + id + ".html");
+		doc = docLoader.load("result_race_id_" + id + ".html");
 		setUpIsDone = true;
 	}
 	
@@ -138,3 +131,4 @@ public class RPCardDataScraperTest extends TestCase {
 	}
 }
 	
+

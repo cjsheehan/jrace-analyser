@@ -8,9 +8,8 @@ import org.springframework.context.annotation.PropertySource;
 
 @Configuration
 @ComponentScan("com.cjsheehan.jrace")
-@Import({ com.cjsheehan.jrace.racing.repository.config.PersistenceContext.class })
+@Import({ com.cjsheehan.jrace.racing.repository.config.PersistenceContext.class,  com.cjsheehan.jrace.scrape.rpost.config.RPContext.class})
 public class ApplicationContext {
-
 	/**
 	 * These static classes are required because it makes it possible to use
 	 * different properties files for every Spring profile.
@@ -29,5 +28,7 @@ public class ApplicationContext {
 	@PropertySource("classpath:integration-test.properties")
 	static class IntegrationTestProperties {
 	}
+
+
 
 }

@@ -28,6 +28,7 @@ public class Persist {
 
 		Persist p = context.getBean(Persist.class);
 		p.start(args);
+		context.close();
 	}
 
 	public void start(String[] args) {

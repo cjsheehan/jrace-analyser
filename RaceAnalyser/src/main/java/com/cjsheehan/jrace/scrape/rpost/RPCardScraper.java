@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.cjsheehan.jrace.racing.Card;
-import com.cjsheehan.jrace.scrape.CardDataScraper;
+import com.cjsheehan.jrace.scrape.RaceDataScraper;
 import com.cjsheehan.jrace.scrape.CardScraper;
 import com.cjsheehan.jrace.scrape.ScrapeException;
 
@@ -16,7 +16,7 @@ public class RPCardScraper implements CardScraper {
 	final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
 	@Autowired
-	private CardDataScraper cds;
+	private RaceDataScraper cds;
 
 	@Override
 	public Card scrape(Document doc) {
