@@ -1,14 +1,12 @@
 package com.cjsheehan.jrace.scrape.rpost;
 
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
-import com.cjsheehan.jrace.scrape.RaceScraperParams;
+import com.cjsheehan.jrace.scrape.ResultParamProvider;
 
-@Primary
 @Component
-public class RPResultDataSelector implements RaceScraperParams {
-	
+public class RPResultParamProvider implements ResultParamProvider {
+
 	private static final String AGE_CONSTRAINT_SELECT= "span.rp-raceTimeCourseName_ratingBandAndAgesAllowed";
 	private static final String COURSE_NAME_SELECT= "a.rp-raceTimeCourseName__name";
 	private static final String GRADE_SELECT= "span.rp-raceTimeCourseName_class";
@@ -20,7 +18,10 @@ public class RPResultDataSelector implements RaceScraperParams {
 	private static final String NUM_RUNNERS_SELECT= "div[data-test-selector=RC-headerBox__runners] > div.RC-headerBox__infoRow__content";
 	private static final String DISTANCE_SELECT= "span.rp-raceTimeCourseName_distanceFull";
 	private static final String DATE_FORMAT = "hh:mm aa, dd MMMM yyyy";
-	
+	private static final String WINNING_TIME_SELECT = "div.rp-raceInfo > ul > li:nth-child(1) > span.rp-raceInfo__value:nth-child(2)";
+	private static final String NON_RUNNERS_SELECT = "";
+	private static final String WINNING_TIME_FORMAT = "mm ss.SS";
+
 	@Override
 	public String ageConstraintSelector() {
 		return AGE_CONSTRAINT_SELECT;
@@ -74,6 +75,21 @@ public class RPResultDataSelector implements RaceScraperParams {
 	@Override
 	public String dateFormat() {
 		return DATE_FORMAT;
+	}
+	
+	@Override
+	public String winningTimeSelector() {
+		return WINNING_TIME_SELECT;
+	}
+
+	@Override
+	public String nonRunnersSelector() {
+		return NON_RUNNERS_SELECT;
+	}
+
+	@Override
+	public String winningTimeFormat() {
+		return WINNING_TIME_FORMAT;
 	}
 
 }

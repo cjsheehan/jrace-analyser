@@ -1,22 +1,24 @@
 package com.cjsheehan.jrace.scrape.rpost;
 
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
-import com.cjsheehan.jrace.scrape.RaceScraperParams;
+import com.cjsheehan.jrace.scrape.StandardParamProvider;
 
+@Primary
 @Component
-public class RPCardDataSelector implements RaceScraperParams {
-
-	private static final String AGE_CONSTRAINT_SELECT= "span[data-test-selector=RC-header__rpAges]";
-	private static final String COURSE_NAME_SELECT= "a.RC-courseHeader__name";
-	private static final String GRADE_SELECT= "span[data-test-selector=RC-header__raceClass]";
-	private static final String GOING_SELECT= "div[data-test-selector=RC-headerBox__going] > div.RC-headerBox__infoRow__content";
-	private static final String TITLE_SELECT= "span[data-test-selector=RC-header__raceInstanceTitle]";
-	private static final String DATE_SELECT= "span.RC-courseHeader__date";
-	private static final String TIME_SELECT= "span[data-race-time]";
+public class RPResultScraperParams implements StandardParamProvider {
+	
+	private static final String AGE_CONSTRAINT_SELECT= "span.rp-raceTimeCourseName_ratingBandAndAgesAllowed";
+	private static final String COURSE_NAME_SELECT= "a.rp-raceTimeCourseName__name";
+	private static final String GRADE_SELECT= "span.rp-raceTimeCourseName_class";
+	private static final String GOING_SELECT= "span.rp-raceTimeCourseName_condition";
+	private static final String TITLE_SELECT= "h2.rp-raceTimeCourseName__title";
+	private static final String DATE_SELECT= "span.rp-raceTimeCourseName__date";
+	private static final String TIME_SELECT= "span.rp-raceTimeCourseName__time";
 	private static final String PRIZE_SELECT= "div[data-test-selector=RC-headerBox__winner] > div.RC-headerBox__infoRow__content";
 	private static final String NUM_RUNNERS_SELECT= "div[data-test-selector=RC-headerBox__runners] > div.RC-headerBox__infoRow__content";
-	private static final String DISTANCE_SELECT= "span[data-test-selector=RC-header__raceDistance]";
+	private static final String DISTANCE_SELECT= "span.rp-raceTimeCourseName_distanceFull";
 	private static final String DATE_FORMAT = "hh:mm aa, dd MMMM yyyy";
 	
 	@Override

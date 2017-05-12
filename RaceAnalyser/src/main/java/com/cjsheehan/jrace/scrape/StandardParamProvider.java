@@ -3,7 +3,7 @@ package com.cjsheehan.jrace.scrape;
 import org.springframework.stereotype.Component;
 
 @Component
-public interface RaceScraperParams {
+public interface StandardParamProvider {
 	String dateFormat();
 	String ageConstraintSelector();
 	String courseNameSelector();

@@ -3,7 +3,9 @@ package com.cjsheehan.jrace.scrape.rpost;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import org.jsoup.nodes.Document;
 import org.junit.Before;
@@ -18,7 +20,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.cjsheehan.jrace.business.JSoupLoader;
 import com.cjsheehan.jrace.racing.repository.config.ApplicationContext;
 import com.cjsheehan.jrace.racing.repository.config.Profiles;
-import com.cjsheehan.jrace.scrape.RaceDataScraper;
+import com.cjsheehan.jrace.scrape.ResultDataScraper;
 import com.cjsheehan.jrace.scrape.ScrapeException;
 
 import junit.framework.TestCase;
@@ -37,8 +39,7 @@ public class RPResultDataScraperTest extends TestCase {
 	private JSoupLoader docLoader;
 
 	@Autowired
-	@Qualifier("resultDataScraper")
-	private RaceDataScraper scraper;
+	private ResultDataScraper scraper;
 
 	@Before
 	public void setUp() throws IOException {
@@ -126,6 +127,22 @@ public class RPResultDataScraperTest extends TestCase {
 	public void ageIsScraped() throws ScrapeException {
 		String expected = "4yo+";
 		String actual = scraper.scrapeAges(doc);
+		assertNotNull(actual);
+		assertEquals(expected, actual);
+	}
+	
+	@Test
+	public void winningTimeIsScraped() throws ScrapeException {
+		long expected = 233010L;
+		long actual = scraper.scrapeWinningTime(doc);
+		assertNotNull(actual);
+		assertEquals(expected, actual);
+	}
+	
+	@Test
+	public void nonRunnersIsScraped() throws ScrapeException {
+		List<String> expected = Arrays.asList("xyz", "abc");
+		List<String> actual = scraper.scrapeNonRunners(doc);
 		assertNotNull(actual);
 		assertEquals(expected, actual);
 	}
