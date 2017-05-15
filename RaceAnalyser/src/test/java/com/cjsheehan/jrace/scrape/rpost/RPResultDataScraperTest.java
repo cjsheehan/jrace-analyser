@@ -32,7 +32,7 @@ public class RPResultDataScraperTest extends TestCase {
 
 	private static boolean setUpIsDone = false;
 	private static Document doc;
-	private static int id = 6672154;
+	private static int id = 672154;
 
 	@Autowired
 	@Qualifier("localJSoupLoader")
@@ -86,7 +86,7 @@ public class RPResultDataScraperTest extends TestCase {
 	
 	@Test
 	public void numRunnersIsScraped() throws ScrapeException {
-		int expected = 24;
+		int expected = 11;
 		int actual = scraper.scrapeNumRunners(doc);
 		assertEquals(expected, actual);
 	}
@@ -141,7 +141,7 @@ public class RPResultDataScraperTest extends TestCase {
 	
 	@Test
 	public void nonRunnersIsScraped() throws ScrapeException {
-		List<String> expected = Arrays.asList("xyz", "abc");
+		List<String> expected = Arrays.asList("Aldeburgh", "Catcher In The Rye");
 		List<String> actual = scraper.scrapeNonRunners(doc);
 		assertNotNull(actual);
 		assertEquals(expected, actual);

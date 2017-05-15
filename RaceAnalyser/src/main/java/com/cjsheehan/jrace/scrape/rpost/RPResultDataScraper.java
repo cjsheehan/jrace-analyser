@@ -2,6 +2,7 @@ package com.cjsheehan.jrace.scrape.rpost;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -10,6 +11,7 @@ import java.util.regex.Pattern;
 
 import org.jsoup.helper.StringUtil;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -31,10 +33,13 @@ public class RPResultDataScraper implements ResultDataScraper {
 	private ResultParamProvider params;
 	
 	private static Pattern pTime = Pattern.compile("(\\d+)m (\\d{2}).(\\d+)s"); // 3m 53.10s
+	private static Pattern pPrize = Pattern.compile("1st (.+) 2nd"); // 3m 53.10s
 	
 	@Override
 	public int scrapeRaceId(Element elem) throws ScrapeException {
-		return rdScraper.scrapeRaceId(elem);
+		String selector = "div[data-race-id]";
+		Element idElem = elem.select(selector).first();
+		return Integer.parseInt(idElem.attr("data-race-id"));
 	}
 
 	@Override
@@ -75,12 +80,26 @@ public class RPResultDataScraper implements ResultDataScraper {
 
 	@Override
 	public double scrapePrize(Element elem) throws ScrapeException {
-		return rdScraper.scrapePrize(elem);
+		if(elem == null) throw new IllegalArgumentException("elem is null");
+		String selector = "div[data-test-selector=text-prizeMoney]";
+		// body > div.rp-results.rp-container.cf.js-contentWrapper.ng-scope > main > section > div.rp-raceTimeCourseName > div > span > div
+		String selected = elem.select(selector).first().text();
+		if(StringUtil.isBlank(selected)) throw new ScrapeException("prize", elem.toString(), selector);
+		Matcher mPrize = pPrize.matcher(selected);
+		
+		if(!mPrize.find()) throw new ScrapeException("Prize", elem.toString(), selector);
+		String prize = mPrize.group(1).replace("£", "")
+						.replace("€", "")
+						.replace("$", "")
+						.replace(",", "")
+						.trim();
+		return Double.parseDouble(prize);
 	}
 
 	@Override
 	public int scrapeNumRunners(Element elem) throws ScrapeException {
-		return rdScraper.scrapeNumRunners(elem);
+		String selector = "div.rp-horseTable > table > tbody > tr.rp-horseTable__mainRow";
+		return elem.select(selector).size();
 	}
 
 	@Override
@@ -114,20 +133,28 @@ public class RPResultDataScraper implements ResultDataScraper {
 		String time = Scrape.text(elem, params.winningTimeSelector());
 		if(StringUtil.isBlank(time)) throw new ScrapeException("Time", elem.toString(), params.timeSelector());
 		Matcher mTime = pTime.matcher(time);
-		long total = 0;
-		if (mTime.find()) {
-			total = TimeUnit.MINUTES.toMillis(Long.parseLong(mTime.group(1)))
-					+ TimeUnit.SECONDS.toMillis(Long.parseLong(mTime.group(2)))
-					+ TimeUnit.MILLISECONDS.toMillis(Long.parseLong(mTime.group(3)));
-		}
-
-		return total;
+		if (!mTime.find()) throw new ScrapeException("Winning Time", elem.toString(), params.nonRunnersSelector());
+		
+		return TimeUnit.MINUTES.toMillis(Long.parseLong(mTime.group(1)))
+				+ TimeUnit.SECONDS.toMillis(Long.parseLong(mTime.group(2)))
+				+ TimeUnit.MILLISECONDS.toMillis(Long.parseLong(mTime.group(3)));
 	}
 	
 	@Override
 	public List<String> scrapeNonRunners(Element elem) throws ScrapeException {
-		// TODO Auto-generated method stub
-		return null;
+		if(elem == null) throw new IllegalArgumentException("elem is null");
+		Element selected = elem.select(params.nonRunnersSelector()).first();
+		String scrapedRunners = null;
+		if(selected.ownText().contains("Non-runners")) {
+			scrapedRunners = selected.select("span").first().ownText();
+			if(StringUtil.isBlank(scrapedRunners)) throw new ScrapeException("Non-Runners", elem.toString(), params.nonRunnersSelector());
+		}
+		String[] splitRunners = scrapedRunners.split(",");
+		for (int i = 0; i < splitRunners.length; i++) {
+			splitRunners[i] = splitRunners[i].replaceAll("\\(.+?\\)", "").trim();
+		}
+		
+		return Arrays.asList(splitRunners);
 	}
 
 }

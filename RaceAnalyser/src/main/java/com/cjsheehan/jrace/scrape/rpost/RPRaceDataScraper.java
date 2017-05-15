@@ -174,20 +174,9 @@ public class RPRaceDataScraper implements RaceDataScraper {
 	@Override
 	public int scrapeRaceId(Element elem) throws ScrapeException {
 		if(elem == null) throw new IllegalArgumentException("elem is null");
-		// TODO resolve url using element
-		String url = "";
-		int raceId;
-		Matcher m = raceIdPtrn.matcher(url);
-		if (m.find()) {
-			try {
-				raceId = Integer.parseInt(m.group(1));
-			} catch (NumberFormatException e) {
-				throw new ScrapeException("Race ID", url, "pattern: " + raceIdPtrn.toString());
-			}
-		} else {
-			throw new ScrapeException("Race ID", url, "pattern: " + raceIdPtrn.toString());
-		}
-		return raceId;
+		String selector = "section[data-card-race-id]";
+		Element idElem = elem.select(selector).first();
+		return Integer.parseInt(idElem.attr("data-card-race-id"));
 	}
 
 

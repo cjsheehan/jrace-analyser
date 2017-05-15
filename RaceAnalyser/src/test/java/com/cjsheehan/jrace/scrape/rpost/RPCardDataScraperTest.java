@@ -36,7 +36,7 @@ public class RPCardDataScraperTest extends TestCase {
 
 	private static boolean setUpIsDone = false;
 	private static Document doc;
-	private static int id = 6672154;
+	private static int id = 672154;
 
 	@Autowired
 	@Qualifier("localJSoupLoader")

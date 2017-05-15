@@ -19,7 +19,7 @@ public class RPResultParamProvider implements ResultParamProvider {
 	private static final String DISTANCE_SELECT= "span.rp-raceTimeCourseName_distanceFull";
 	private static final String DATE_FORMAT = "hh:mm aa, dd MMMM yyyy";
 	private static final String WINNING_TIME_SELECT = "div.rp-raceInfo > ul > li:nth-child(1) > span.rp-raceInfo__value:nth-child(2)";
-	private static final String NON_RUNNERS_SELECT = "";
+	private static final String NON_RUNNERS_SELECT = "div.rp-raceInfo > ul > li:nth-child(2)";
 	private static final String WINNING_TIME_FORMAT = "mm ss.SS";
 
 	@Override
