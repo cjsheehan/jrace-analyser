@@ -5,7 +5,7 @@ import java.util.List;
 import org.jsoup.nodes.Document;
 import org.springframework.stereotype.Component;
 
-import com.cjsheehan.jrace.scrape.rpost.CardEntrant;
+import com.cjsheehan.jrace.racing.CardEntrant;
 
 @Component
 public interface CardEntrantScraper {
