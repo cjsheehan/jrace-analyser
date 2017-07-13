@@ -11,7 +11,6 @@ import java.util.regex.Pattern;
 
 import org.jsoup.helper.StringUtil;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;

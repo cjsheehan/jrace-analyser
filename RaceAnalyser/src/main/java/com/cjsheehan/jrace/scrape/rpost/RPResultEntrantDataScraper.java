@@ -1,16 +1,27 @@
 package com.cjsheehan.jrace.scrape.rpost;
 
 import org.jsoup.nodes.Element;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import com.cjsheehan.jrace.racing.ConvertDistance;
-import com.cjsheehan.jrace.racing.Odds;
+import com.cjsheehan.jrace.racing.Horse;
+import com.cjsheehan.jrace.racing.Jockey;
+import com.cjsheehan.jrace.racing.Rating;
+import com.cjsheehan.jrace.racing.Trainer;
+import com.cjsheehan.jrace.racing.Weight;
+import com.cjsheehan.jrace.scrape.RaceEntrantDataScraper;
 import com.cjsheehan.jrace.scrape.ResultEntrantDataScraper;
 import com.cjsheehan.jrace.scrape.Scrape;
 import com.cjsheehan.jrace.scrape.ScrapeException;
 
 @Component
 public class RPResultEntrantDataScraper implements ResultEntrantDataScraper {
+
+	@Autowired
+	@Qualifier("resultEntrantDataScraper")
+	private RaceEntrantDataScraper redScraper;
 
 	@Override
 	public String scrapePosition(Element elem) throws ScrapeException {
@@ -52,17 +63,63 @@ public class RPResultEntrantDataScraper implements ResultEntrantDataScraper {
 		return toFirst;
 	}
 
-
 	@Override
-	public Odds scrapeOdds(Element elem) throws ScrapeException {
-		// TODO Auto-generated method stub
-		return null;
+	public String scrapePrice(Element elem) throws ScrapeException {
+		final String selector = "span.rp-horseTable__horse__price";
+		String scraped;
+		try {
+			scraped = Scrape.text(elem, selector);
+		} catch (Exception e) {
+			throw new ScrapeException("Price", elem.toString(), selector);
+		}
+		return scraped;
 	}
 
 	@Override
 	public String scrapeComments(Element elem) throws ScrapeException {
-		// TODO Auto-generated method stub
-		return null;
+		final String selector = "tr.rp-horseTable__commentRow > td";
+		String scraped;
+		try {
+			scraped = Scrape.text(elem, selector);
+		} catch (Exception e) {
+			throw new ScrapeException("Price", elem.toString(), selector);
+		}
+		return scraped;
+	}
+
+	@Override
+	public int scrapeAge(Element elem) throws ScrapeException {
+		return redScraper.scrapeAge(elem);
+	}
+
+	@Override
+	public Horse scrapeHorse(Element elem) throws ScrapeException {
+		return redScraper.scrapeHorse(elem);
+	}
+
+	@Override
+	public Jockey scrapeJockey(Element elem) throws ScrapeException {
+		return redScraper.scrapeJockey(elem);
+	}
+
+	@Override
+	public Rating scrapeRating(Element elem) throws ScrapeException {
+		return redScraper.scrapeRating(elem);
+	}
+
+	@Override
+	public Trainer scrapeTrainer(Element elem) throws ScrapeException {
+		return redScraper.scrapeTrainer(elem);
+	}
+
+	@Override
+	public Weight scrapeWeight(Element elem) throws ScrapeException {
+		return redScraper.scrapeWeight(elem);
+	}
+
+	@Override
+	public int scrapeWeightAllowance(Element elem) throws ScrapeException {
+		return redScraper.scrapeWeightAllowance(elem);
 	}
 
 }
