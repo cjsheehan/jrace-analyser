@@ -54,55 +54,52 @@ public class RPResultEntrantDataScraperTest {
 		// do the setup
 		String fName = "result_race_id_" + raceId + ".html";
 		doc = docLoader.load(fName);
-		entrant = doc.select("div.rp-horseTable > table > tbody > tr.rp-horseTable__mainRow").first();
+		entrant = doc.select("div.rp-horseTable > table > tbody > tr.rp-horseTable__mainRow").get(2);
 		setUpIsDone = true;
 	}
 
 	@Test
 	public void positionIsScraped() throws ScrapeException {
 		String actual = reds.scrapePosition(entrant);
-		String expected = "1";
+		String expected = "3";
 		assertEquals(expected, actual);
 	}
 
 	@Test
 	public void beatenDistanceToFirstIsScraped() throws ScrapeException {
-		entrant = doc.select("div.rp-horseTable > table > tbody > tr.rp-horseTable__mainRow").get(2);
 		double actual = reds.scrapeBeatenDistanceToFirst(entrant);
 		assertEquals(11.75, actual, DELTA);
 	}
 
 	@Test
 	public void beatenDistanceToNextIsScraped() throws ScrapeException {
-		entrant = doc.select("div.rp-horseTable > table > tbody > tr.rp-horseTable__mainRow").get(2);
 		double actual = reds.scrapeBeatenDistanceToNext(entrant);
 		assertEquals(8, actual, DELTA);
 	}
 
 	@Test
 	public void priceIsScraped() throws ScrapeException {
-		entrant = doc.select("div.rp-horseTable > table > tbody > tr.rp-horseTable__mainRow").get(2);
 		String actual = reds.scrapePrice(entrant);
 		assertEquals("40/1", actual);
 	}
 
 	@Test
 	public void commentIsScraped() throws ScrapeException {
-		entrant = doc.select("div.rp-horseTable > table > tbody > tr.rp-horseTable__commentRow").get(2);
-		String actual = reds.scrapeComments(entrant);
+		String actual = reds
+				.scrapeComments(doc.select("div.rp-horseTable > table > tbody > tr.rp-horseTable__commentRow").get(2));
 		assertEquals("Prominent, effort and pushed along before 2 out, soon one pace (op 50/1)", actual);
 	}
 
 	@Test
 	public void ageIsScraped() throws ScrapeException {
-		int expected = 5;
+		int expected = 6;
 		int actual = reds.scrapeAge(entrant);
 		assertEquals(expected, actual);
 	}
 
 	@Test
 	public void horseIsScraped() throws ScrapeException {
-		Horse expected = new Horse("Ramonex", 850951L);
+		Horse expected = new Horse("An Fear Ciuin", 846468L);
 		Horse actual = reds.scrapeHorse(entrant);
 		assertEquals(expected.getName(), actual.getName());
 		assertEquals(expected.getId(), actual.getId());
@@ -110,7 +107,7 @@ public class RPResultEntrantDataScraperTest {
 
 	@Test
 	public void jockeyIsScraped() throws ScrapeException {
-		Jockey expected = new Jockey("Harry Skelton", 85218L);
+		Jockey expected = new Jockey("Dale Irving", 91340L);
 		Jockey actual = reds.scrapeJockey(entrant);
 		assertEquals(expected.getName(), actual.getName());
 		assertEquals(expected.getId(), actual.getId());
@@ -118,7 +115,7 @@ public class RPResultEntrantDataScraperTest {
 
 	@Test
 	public void trainerIsScraped() throws ScrapeException {
-		Trainer expected = new Trainer("Dan Skelton", 16270L);
+		Trainer expected = new Trainer("R Mike Smith", 10241L);
 		Trainer actual = reds.scrapeTrainer(entrant);
 		assertEquals(expected.getName(), actual.getName());
 		assertEquals(expected.getId(), actual.getId());
@@ -126,7 +123,7 @@ public class RPResultEntrantDataScraperTest {
 
 	@Test
 	public void weightIsScraped() throws ScrapeException {
-		Weight expected = new Weight(11, 12);
+		Weight expected = new Weight(10, 7);
 		Weight actual = reds.scrapeWeight(entrant);
 		assertEquals(expected.getStonesComponent(), actual.getStonesComponent());
 		assertEquals(expected.getLbsComponent(), actual.getLbsComponent());
@@ -134,14 +131,14 @@ public class RPResultEntrantDataScraperTest {
 
 	@Test
 	public void weightAllowanceIsScraped() throws ScrapeException {
-		int expected = 3;
+		int expected = 5;
 		int actual = reds.scrapeWeightAllowance(entrant);
 		assertEquals(expected, actual);
 	}
 
 	@Test
 	public void ratingIsScraped() throws ScrapeException {
-		Rating expected = new Rating(127, 133, 110, -1);
+		Rating expected = new Rating(-1, 101, 73, -1);
 		Rating actual = reds.scrapeRating(entrant);
 		assertEquals(expected.getOfficialRating(), actual.getOfficialRating());
 		assertEquals(expected.getRpRating(), actual.getRpRating());

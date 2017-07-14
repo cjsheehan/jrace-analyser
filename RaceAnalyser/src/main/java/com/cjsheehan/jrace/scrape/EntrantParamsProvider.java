@@ -16,7 +16,9 @@ public interface EntrantParamsProvider {
 
 	String ratingRprSelector();
 
-	String weightSelector();
+	String weightStSelector();
+
+	String weightLbSelector();
 
 	String weightAllowanceSelector();
 

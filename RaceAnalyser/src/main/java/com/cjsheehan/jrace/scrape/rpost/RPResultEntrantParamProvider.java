@@ -10,11 +10,12 @@ public class RPResultEntrantParamProvider implements EntrantParamsProvider {
 	private static final String HORSE_NAME_SELECT = "a[data-test-selector=link-horseName]";
 	private static final String JOCKEY_NAME_SELECT = "a[data-test-selector=link-jockeyName]";
 	private static final String TRAINER_NAME_SELECT = "a[data-test-selector=link-trainerName]";
-	private static final String RATING_OR_SELECT = "td[data-ending=OR]";
-	private static final String RATING_RPR_SELECT = "td[data-ending=RPR]";
-	private static final String RATING_TS_SELECT = "td[data-ending=TS]";
-	private static final String WEIGHT_SELECT = "td.rp-horseTable__wgt";
-	private static final String WEIGHT_ALLOWANCE_SELECT = "div.rp-horseTable__human > sup";
+	private static final String RATING_OR_SELECT = "td[data-ending=\"OR\"]";
+	private static final String RATING_RPR_SELECT = "td[data-test-selector=full-result-rpr]";
+	private static final String RATING_TS_SELECT = "td[data-test-selector=full-result-topspeed]";
+	private static final String WEIGHT_ST_SELECT = "span[data-test-selector=horse-weight-st]";
+	private static final String WEIGHT_LB_SELECT = "span[data-test-selector=horse-weight-lb]";
+	private static final String WEIGHT_ALLOWANCE_SELECT = "span.rp-horseTable__human__wrapper > sup";
 
 	@Override
 	public String ageSelector() {
@@ -52,12 +53,17 @@ public class RPResultEntrantParamProvider implements EntrantParamsProvider {
 	}
 
 	@Override
-	public String weightSelector() {
-		return WEIGHT_SELECT;
+	public String weightAllowanceSelector() {
+		return WEIGHT_ALLOWANCE_SELECT;
 	}
 
 	@Override
-	public String weightAllowanceSelector() {
-		return WEIGHT_ALLOWANCE_SELECT;
+	public String weightStSelector() {
+		return WEIGHT_ST_SELECT;
+	}
+
+	@Override
+	public String weightLbSelector() {
+		return WEIGHT_LB_SELECT;
 	}
 }

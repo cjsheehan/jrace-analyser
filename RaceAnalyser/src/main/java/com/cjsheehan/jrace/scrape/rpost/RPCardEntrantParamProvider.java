@@ -15,7 +15,8 @@ public class RPCardEntrantParamProvider implements EntrantParamsProvider {
 	private static final String RATING_OR_SELECT = "span[data-test-selector=RC-racecardKey__Or]";
 	private static final String RATING_RPR_SELECT = "span[data-test-selector=RC-racecardKey__Rpr]";
 	private static final String RATING_TS_SELECT = "span[data-test-selector=RC-racecardKey__Ts]";
-	private static final String WEIGHT_SELECT = "span[data-test-selector=RC-cardPage-runnerWgt-carried]";
+	private static final String WEIGHT_ST_SELECT = "span.RC-runnerWgt__carried_st";
+	private static final String WEIGHT_LB_SELECT = "span.RC-runnerWgt__carried_lb";
 	private static final String WEIGHT_ALLOWANCE_SELECT = "span[data-test-selector=RC-cardPage-runnerJockey-allowance]";
 
 	@Override
@@ -54,13 +55,18 @@ public class RPCardEntrantParamProvider implements EntrantParamsProvider {
 	}
 
 	@Override
-	public String weightSelector() {
-		return WEIGHT_SELECT;
+	public String weightAllowanceSelector() {
+		return WEIGHT_ALLOWANCE_SELECT;
 	}
 
 	@Override
-	public String weightAllowanceSelector() {
-		return WEIGHT_ALLOWANCE_SELECT;
+	public String weightStSelector() {
+		return WEIGHT_ST_SELECT;
+	}
+
+	@Override
+	public String weightLbSelector() {
+		return WEIGHT_LB_SELECT;
 	}
 
 }

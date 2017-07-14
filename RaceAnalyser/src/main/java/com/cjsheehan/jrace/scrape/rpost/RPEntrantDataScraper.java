@@ -78,7 +78,6 @@ public class RPEntrantDataScraper implements RaceEntrantDataScraper {
 		return new Jockey(name, id);
 	}
 
-
 	@Override
 	public Rating scrapeRating(Element elem) throws ScrapeException {
 		int ts = scrapeRating(elem, Provider.TS);
@@ -108,22 +107,29 @@ public class RPEntrantDataScraper implements RaceEntrantDataScraper {
 
 	@Override
 	public Weight scrapeWeight(Element elem) throws ScrapeException {
-		final String stSelector = "span.RC-runnerWgt__carried_st";
 		String wgtSt;
 		try {
-			wgtSt = Scrape.text(elem, stSelector);
+			wgtSt = Scrape.text(elem, params.weightStSelector());
 		} catch (Exception e) {
-			throw new ScrapeException("Carried Weight St", elem.toString(), stSelector);
+			throw new ScrapeException("Carried Weight St", elem.toString(), params.weightStSelector());
 		}
 
-		final String lbSelector = "span.RC-runnerWgt__carried_lb";
 		String wtLbs;
 		try {
-			wtLbs = Scrape.text(elem, lbSelector);
+			wtLbs = Scrape.text(elem, params.weightLbSelector());
 		} catch (Exception e) {
-			throw new ScrapeException("Carried Weight lbs", elem.toString(), lbSelector);
+			throw new ScrapeException("Carried Weight lbs", elem.toString(), params.weightLbSelector());
 		}
-		return new Weight(wgtSt + "-" + wtLbs);
+
+		Weight wt = null;
+
+		try {
+			wt = new Weight(wgtSt + "-" + wtLbs);
+
+		} catch (NumberFormatException e) {
+			throw new ScrapeException(String.format("Could not convert {0} to valid weight", wgtSt + "-" + wtLbs));
+		}
+		return wt;
 	}
 
 	@Override
@@ -157,32 +163,38 @@ public class RPEntrantDataScraper implements RaceEntrantDataScraper {
 	}
 
 	private int scrapeRating(Element elem, Rating.Provider provider) throws ScrapeException {
-		String selector = "span.RC-runner";
+		String selector;
 		switch (provider) {
 		case RPR:
-			selector = selector + "Rpr";
+			selector = params.ratingRprSelector();
 			break;
 
 		case OR:
-			selector = selector + "Or";
+			selector = params.ratingOrSelector();
 			break;
 
 		case TS:
-			selector = selector + "Ts";
+			selector = params.ratingTsSelector();
 			break;
 
 		default:
-			break;
+			return -1;
 		}
 
 		int rating;
 		String scraped;
 		try {
 			scraped = Scrape.text(elem, selector);
-			if (scraped == "-") {
+			if (scraped.equals("–")) {
 				return -1;
 			} else {
-				rating = Scrape.integer(elem, selector);
+				try {
+					rating = Integer.parseInt(scraped);
+				} catch (NumberFormatException e) {
+					throw new ScrapeException(
+							String.format("Could not parse valid rating from {0} with selector: {1} from text : {2}",
+									scraped, selector, elem.toString()));
+				}
 			}
 		} catch (Exception e) {
 			throw new ScrapeException(provider.toString() + " Rating", elem.toString(), selector);
