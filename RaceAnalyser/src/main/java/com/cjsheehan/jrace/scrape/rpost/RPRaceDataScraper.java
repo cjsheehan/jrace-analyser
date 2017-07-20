@@ -3,23 +3,20 @@ package com.cjsheehan.jrace.scrape.rpost;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.jsoup.helper.StringUtil;
-import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.cjsheehan.jrace.racing.Currency;
 import com.cjsheehan.jrace.racing.Distance;
+import com.cjsheehan.jrace.racing.Prize;
 import com.cjsheehan.jrace.scrape.RaceDataScraper;
-import com.cjsheehan.jrace.scrape.StandardParamProvider;
 import com.cjsheehan.jrace.scrape.Scrape;
 import com.cjsheehan.jrace.scrape.ScrapeException;
+import com.cjsheehan.jrace.scrape.StandardParamProvider;
 
 public class RPRaceDataScraper implements RaceDataScraper {
-	private static Pattern raceIdPtrn = Pattern.compile("race_id[=_](\\d+)");
 	private StandardParamProvider params;
 	
 	@Autowired
@@ -148,7 +145,7 @@ public class RPRaceDataScraper implements RaceDataScraper {
 
 
 	@Override
-	public double scrapePrize(Element elem) throws ScrapeException {
+	public Prize scrapePrize(Element elem) throws ScrapeException {
 		if(elem == null) throw new IllegalArgumentException("elem is null");
 		String prize = "";
 		double prizeVal = 0;
@@ -161,15 +158,16 @@ public class RPRaceDataScraper implements RaceDataScraper {
 				cur = Currency.USD;
 			}
 			
-			prize = prize.replace("£", "").replace("€", "").replace("$", "").replace(",", "");
+			prize = prize.replace("£", "").replace("€", "").replace("$", "").replace(",", "").replaceAll(" .*", "");
 			prizeVal = Double.parseDouble(prize);
+		} catch (NumberFormatException e) {
+			throw new ScrapeException("Winning Prize : Number format ", elem.toString(), params.prizeSelector());
 		} catch (Exception e) {
 			throw new ScrapeException("Winning Prize", elem.toString(), params.prizeSelector());
 		}
 
-		return prizeVal;
+		return new Prize(prizeVal, cur);
 	}
-
 
 	@Override
 	public int scrapeRaceId(Element elem) throws ScrapeException {

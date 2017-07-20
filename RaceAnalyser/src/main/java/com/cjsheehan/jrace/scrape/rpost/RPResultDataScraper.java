@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import com.cjsheehan.jrace.racing.Distance;
+import com.cjsheehan.jrace.racing.Prize;
 import com.cjsheehan.jrace.scrape.RaceDataScraper;
 import com.cjsheehan.jrace.scrape.ResultDataScraper;
 import com.cjsheehan.jrace.scrape.ResultParamProvider;
@@ -78,21 +79,25 @@ public class RPResultDataScraper implements ResultDataScraper {
 	}
 
 	@Override
-	public double scrapePrize(Element elem) throws ScrapeException {
-		if(elem == null) throw new IllegalArgumentException("elem is null");
-		String selector = "div[data-test-selector=text-prizeMoney]";
-		// body > div.rp-results.rp-container.cf.js-contentWrapper.ng-scope > main > section > div.rp-raceTimeCourseName > div > span > div
-		String selected = elem.select(selector).first().text();
-		if(StringUtil.isBlank(selected)) throw new ScrapeException("prize", elem.toString(), selector);
-		Matcher mPrize = pPrize.matcher(selected);
-		
-		if(!mPrize.find()) throw new ScrapeException("Prize", elem.toString(), selector);
-		String prize = mPrize.group(1).replace("£", "")
-						.replace("€", "")
-						.replace("$", "")
-						.replace(",", "")
-						.trim();
-		return Double.parseDouble(prize);
+	public Prize scrapePrize(Element elem) throws ScrapeException {
+		// if(elem == null) throw new IllegalArgumentException("elem is null");
+		// String selector = "div[data-test-selector=text-prizeMoney]";
+		// // body > div.rp-results.rp-container.cf.js-contentWrapper.ng-scope >
+		// main > section > div.rp-raceTimeCourseName > div > span > div
+		// String selected = elem.select(selector).first().text();
+		// if(StringUtil.isBlank(selected)) throw new ScrapeException("prize",
+		// elem.toString(), selector);
+		// Matcher mPrize = pPrize.matcher(selected);
+		//
+		// if(!mPrize.find()) throw new ScrapeException("Prize",
+		// elem.toString(), selector);
+		// String prize = mPrize.group(1).replace("£", "")
+		// .replace("€", "")
+		// .replace("$", "")
+		// .replace(",", "")
+		// .trim();
+		// return Double.parseDouble(prize);
+		return rdScraper.scrapePrize(elem);
 	}
 
 	@Override

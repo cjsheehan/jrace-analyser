@@ -19,6 +19,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.cjsheehan.jrace.business.JSoupLoader;
+import com.cjsheehan.jrace.racing.Currency;
+import com.cjsheehan.jrace.racing.Prize;
 import com.cjsheehan.jrace.racing.repository.config.ApplicationContext;
 import com.cjsheehan.jrace.racing.repository.config.Profiles;
 import com.cjsheehan.jrace.scrape.RaceDataScraper;
@@ -83,9 +85,9 @@ public class RPCardDataScraperTest extends TestCase {
 	
 	@Test
 	public void prizeIsScraped() throws ScrapeException, ParseException {
-		double expected = 3798.0;
-		double actual = scraper.scrapePrize(doc);
-		assertEquals(expected, actual);
+		Prize actual = scraper.scrapePrize(doc);
+		assertEquals(3798.0, actual.getValue());
+		assertEquals(Currency.GBP, actual.getCurrency());
 	}
 	
 	@Test

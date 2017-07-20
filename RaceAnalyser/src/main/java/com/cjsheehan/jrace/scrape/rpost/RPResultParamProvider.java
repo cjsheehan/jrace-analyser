@@ -14,7 +14,7 @@ public class RPResultParamProvider implements ResultParamProvider {
 	private static final String TITLE_SELECT= "h2.rp-raceTimeCourseName__title";
 	private static final String DATE_SELECT= "span.rp-raceTimeCourseName__date";
 	private static final String TIME_SELECT= "span.rp-raceTimeCourseName__time";
-	private static final String PRIZE_SELECT= "div[data-test-selector=RC-headerBox__winner] > div.RC-headerBox__infoRow__content";
+	private static final String PRIZE_SELECT = "div[data-test-selector=text-prizeMoney]";
 	private static final String NUM_RUNNERS_SELECT= "div[data-test-selector=RC-headerBox__runners] > div.RC-headerBox__infoRow__content";
 	private static final String DISTANCE_SELECT= "span.rp-raceTimeCourseName_distanceFull";
 	private static final String DATE_FORMAT = "hh:mm aa, dd MMMM yyyy";

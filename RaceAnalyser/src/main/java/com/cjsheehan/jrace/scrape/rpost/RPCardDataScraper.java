@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.cjsheehan.jrace.racing.Distance;
+import com.cjsheehan.jrace.racing.Prize;
 import com.cjsheehan.jrace.scrape.RaceDataScraper;
 import com.cjsheehan.jrace.scrape.ScrapeException;
 
@@ -33,7 +34,7 @@ public class RPCardDataScraper implements RaceDataScraper {
 	}
 
 	@Override
-	public double scrapePrize(Element elem) throws ScrapeException {
+	public Prize scrapePrize(Element elem) throws ScrapeException {
 		return rdScraper.scrapePrize(elem);
 	}
 
