@@ -9,5 +9,5 @@ import com.cjsheehan.jrace.racing.CardEntrant;
 
 @Component
 public interface CardEntrantScraper {
-	List<CardEntrant> scrape(Document doc);
+	List<CardEntrant> scrapeEntrants(Document doc);
 }

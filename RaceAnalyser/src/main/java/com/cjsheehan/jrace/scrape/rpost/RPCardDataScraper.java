@@ -1,22 +1,36 @@
 package com.cjsheehan.jrace.scrape.rpost;
 
+import java.lang.invoke.MethodHandles;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
+import com.cjsheehan.jrace.racing.CardEntrant;
 import com.cjsheehan.jrace.racing.Distance;
 import com.cjsheehan.jrace.racing.Prize;
+import com.cjsheehan.jrace.scrape.CardEntrantDataScraper;
+import com.cjsheehan.jrace.scrape.CardEntrantScraper;
 import com.cjsheehan.jrace.scrape.RaceDataScraper;
 import com.cjsheehan.jrace.scrape.ScrapeException;
 
-public class RPCardDataScraper implements RaceDataScraper {
+@Component
+public class RPCardDataScraper implements RaceDataScraper, CardEntrantScraper {
+	final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 	@Autowired
 	@Qualifier("cardDataScraper")
 	private RaceDataScraper rdScraper;
 	
+	@Autowired
+	private CardEntrantDataScraper ceds;
 	
 	@Override
 	public int scrapeRaceId(Element elem) throws ScrapeException {
@@ -66,6 +80,67 @@ public class RPCardDataScraper implements RaceDataScraper {
 	@Override
 	public String scrapeAges(Element elem) throws ScrapeException {
 		return rdScraper.scrapeAges(elem);
+	}
+
+	@Override
+	public List<CardEntrant> scrapeEntrants(Document doc) {
+		List<CardEntrant> entrants = new ArrayList<>();
+		String selector = "div.RC-runnerRow";
+		List<Element> entrantElems = doc.select(selector);
+		for (Element element : entrantElems) {
+			try {
+				CardEntrant entrant = new CardEntrant();
+
+				// Critical
+				entrant.setHorse(ceds.scrapeHorse(element));
+				entrant.setJockey(ceds.scrapeJockey(element));
+				entrant.setTrainer(ceds.scrapeTrainer(element));
+				entrant.setWeight(ceds.scrapeWeight(element));
+
+				// Non-Critical
+				try {
+					entrant.setAge(ceds.scrapeAge(element));
+				} catch (Exception e) {
+					log.error(e.getMessage());
+				}
+
+				try {
+					entrant.setSaddleNo(ceds.scrapeSaddleNo(element));
+				} catch (Exception e) {
+					log.error(e.getMessage());
+				}
+
+				try {
+					entrant.setDraw(ceds.scrapeDraw(element));
+				} catch (Exception e) {
+					log.error(e.getMessage());
+				}
+
+				try {
+					entrant.setRating(ceds.scrapeRating(element));
+				} catch (Exception e) {
+					log.error(e.getMessage());
+				}
+
+				try {
+					entrant.setLastRan(ceds.scrapeDaysSinceLastRan(element));
+				} catch (Exception e) {
+					log.error(e.getMessage());
+				}
+
+				try {
+					entrant.setWeightClaim(ceds.scrapeWeightAllowance(element));
+				} catch (Exception e) {
+					log.error(e.getMessage());
+				}
+
+				entrants.add(entrant);
+
+			} catch (Exception e) {
+				log.error(e.getMessage());
+			}
+		}
+		return entrants;
 	}
 
 }

@@ -12,9 +12,9 @@ public class RPCardEntrantParamProvider implements EntrantParamsProvider {
 	private static final String HORSE_NAME_SELECT = "a[data-test-selector=RC-cardPage-runnerName]";
 	private static final String JOCKEY_NAME_SELECT = "a[data-test-selector=RC-cardPage-runnerJockey-name]";
 	private static final String TRAINER_NAME_SELECT = "a[data-test-selector=RC-cardPage-runnerTrainer-name]";
-	private static final String RATING_OR_SELECT = "span[data-test-selector=RC-racecardKey__Or]";
-	private static final String RATING_RPR_SELECT = "span[data-test-selector=RC-racecardKey__Rpr]";
-	private static final String RATING_TS_SELECT = "span[data-test-selector=RC-racecardKey__Ts]";
+	private static final String RATING_OR_SELECT = "span[data-test-selector=RC-cardPage-runnerOr]";
+	private static final String RATING_RPR_SELECT = "span[data-test-selector=RC-cardPage-runnerRpr]";
+	private static final String RATING_TS_SELECT = "span[data-test-selector=RC-cardPage-runnerTs]";
 	private static final String WEIGHT_ST_SELECT = "span.RC-runnerWgt__carried_st";
 	private static final String WEIGHT_LB_SELECT = "span.RC-runnerWgt__carried_lb";
 	private static final String WEIGHT_ALLOWANCE_SELECT = "span[data-test-selector=RC-cardPage-runnerJockey-allowance]";
