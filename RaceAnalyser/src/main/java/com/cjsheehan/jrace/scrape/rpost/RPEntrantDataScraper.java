@@ -134,12 +134,15 @@ public class RPEntrantDataScraper implements RaceEntrantDataScraper {
 
 	@Override
 	public int scrapeWeightAllowance(Element elem) throws ScrapeException {
-		int allowance;
+		int allowance = 0;
 		try {
 			allowance = Scrape.integer(elem, params.weightAllowanceSelector());
+		} catch (ScrapeException e) {
+			// Swallow as most entrants have no weight allowance
 		} catch (Exception e) {
 			throw new ScrapeException("Weight claim", elem.toString(), params.weightAllowanceSelector());
 		}
+
 		return allowance;
 	}
 
@@ -197,7 +200,7 @@ public class RPEntrantDataScraper implements RaceEntrantDataScraper {
 				}
 			}
 		} catch (Exception e) {
-			throw new ScrapeException(provider.toString() + " Rating", elem.toString(), selector);
+			throw new ScrapeException(provider.toString() + " Rating", "", selector);
 		}
 		return rating;
 	}
