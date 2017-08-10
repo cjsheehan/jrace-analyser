@@ -28,7 +28,7 @@ class PersistenceContext {
 	final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 	@Autowired
-	private Environment env;
+	// private Environment env;
 
 	private static final String[] ENTITY_PACKAGES = { "com.cjsheehan.jrace.racing" };
 	private static final String PROPERTY_NAME_DB_DRIVER_CLASS = "db.driver";

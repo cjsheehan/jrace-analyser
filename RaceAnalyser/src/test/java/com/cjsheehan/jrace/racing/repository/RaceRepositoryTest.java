@@ -16,10 +16,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.cjsheehan.jrace.business.JSoupLoader;
 import com.cjsheehan.jrace.business.LocalUrlHandler;
 import com.cjsheehan.jrace.business.RacingUrlHandler;
+import com.cjsheehan.jrace.racing.Result;
 import com.cjsheehan.jrace.racing.repository.config.ApplicationContext;
 import com.cjsheehan.jrace.racing.repository.config.Profiles;
-import com.cjsheehan.jrace.scrape.ScrapeException;
-import com.cjsheehan.jrace.scrape.rpost.Result;
 
 import junit.framework.TestCase;
 
@@ -57,16 +56,16 @@ public class RaceRepositoryTest extends TestCase {
 				doc = docProvider.load(url);
 
 				Result result = null;
-				try {
+//				try {
 					result = new Result(doc);
 //					Race race = new Race(result.getDate(), result.getCourse(), result.getNumRunners(), result.getDistance(),
 //											result.getGoing(), result.getPrizes(), result.getWinPrize(), result.getGrade(),
 //											result.getConditions(), result.getTitle(), result.getEntrants());
 //					repository.save(entry);
-					log.info(doc.baseUri() + "\n" + result.toString());
-				} catch (ScrapeException e) {
-					log.error("doc.baseUri() + \n", e);
-				}
+//					log.info(doc.baseUri() + "\n" + result.toString());
+//				} catch (ScrapeException e) {
+//					log.error("doc.baseUri() + \n", e);
+//				}
 			} catch (Exception e) {
 				log.error(url + "\n" + e.getMessage());
 			}

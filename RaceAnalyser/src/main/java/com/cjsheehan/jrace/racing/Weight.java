@@ -9,6 +9,7 @@ public class Weight {
 	
 	private int stonesComponent = 0;
 	private int lbsComponent = 0;
+	private String weight;
 
 	private static final int LBS_PER_STONE = 14;
 	private static final Pattern pToLbs = Pattern.compile("^(\\d+)-(\\d+)$");
@@ -18,6 +19,7 @@ public class Weight {
 		if(lbs < 0) throw new IllegalArgumentException("lbs < 0");
 		stonesComponent = st;
 		lbsComponent = lbs;
+		weight = st + "-" + lbs;
 	}
 	
 	public Weight(String weight) {
@@ -25,8 +27,13 @@ public class Weight {
 		int totalLbs = toLbs(weight);
 		setStonesComponent(totalLbs / LBS_PER_STONE);
 		setLbsComponent(totalLbs % LBS_PER_STONE);
+		this.weight = weight;
 	}
 
+	@Override
+	public String toString() {
+		return weight;
+	}
 
 	/**
 	 * @return the stonesComponent

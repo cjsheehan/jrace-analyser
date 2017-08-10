@@ -7,5 +7,5 @@ import com.cjsheehan.jrace.racing.Card;
 
 @Component
 public interface CardScraper {
-	Card scrape(Document doc);
+	Card scrape(Document doc) throws ScrapeException;
 }

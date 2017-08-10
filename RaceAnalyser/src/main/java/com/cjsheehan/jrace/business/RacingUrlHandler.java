@@ -1,7 +1,5 @@
 package com.cjsheehan.jrace.business;
 
-import org.jsoup.nodes.Document;
-
 public interface RacingUrlHandler {
 	public String createCardUrl(int id);
 

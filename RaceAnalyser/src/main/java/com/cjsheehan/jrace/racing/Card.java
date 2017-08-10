@@ -1,6 +1,7 @@
 package com.cjsheehan.jrace.racing;
 
 import java.util.Date;
+import java.util.List;
 
 public class Card {
 	private int raceId;
@@ -14,6 +15,7 @@ public class Card {
 	private String grade;
 	private String conditions;
 	private String title;
+	private List<CardEntrant> entrants;
 	
 	/**
 	 * @return the raceId
@@ -146,5 +148,17 @@ public class Card {
 	 */
 	public void setTitle(String title) {
 		this.title = title;
+	}
+	/**
+	 * @return the entrants
+	 */
+	public List<CardEntrant> getEntrants() {
+		return entrants;
+	}
+	/**
+	 * @param entrants the entrants to set
+	 */
+	public void setEntrants(List<CardEntrant> entrants) {
+		this.entrants = entrants;
 	}
 }
