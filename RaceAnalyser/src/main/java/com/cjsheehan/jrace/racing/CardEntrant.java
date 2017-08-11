@@ -1,12 +1,17 @@
 package com.cjsheehan.jrace.racing;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
+@Component
+@Scope("prototype")
 public class CardEntrant {
 	private Horse horse;
 	private int age;
 	private int saddleNo;
 	private Weight weightCarried;
 	private int draw;
-	private Rating rating = new Rating();
+	private Rating rating;
 	private int lastRan;
 	private Jockey jockey;
 	private Trainer trainer;

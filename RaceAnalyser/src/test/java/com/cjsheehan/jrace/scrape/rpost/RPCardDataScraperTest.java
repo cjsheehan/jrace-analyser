@@ -146,7 +146,7 @@ public class RPCardDataScraperTest extends TestCase {
 	}
 
 	@Test
-	public void enrtantsAreScraped() throws ScrapeException {
+	public void entrantsAreScraped() throws ScrapeException {
 		// TODO : validate full entrant list
 		CardEntrant actual = eScraper.scrapeEntrants(doc).get(0);
 		assertNotNull(actual);

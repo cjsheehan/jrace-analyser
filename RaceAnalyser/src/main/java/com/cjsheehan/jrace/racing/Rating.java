@@ -4,7 +4,11 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
+@Component
+@Scope("prototype")
 @Embeddable
 public class Rating {
 	

@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import com.cjsheehan.jrace.racing.CardEntrant;
@@ -32,6 +33,9 @@ public class RPCardDataScraper implements RaceDataScraper, CardEntrantScraper {
 	@Autowired
 	private CardEntrantDataScraper ceds;
 	
+	@Autowired
+	private ApplicationContext context;
+
 	@Override
 	public int scrapeRaceId(Element elem) throws ScrapeException {
 		return rdScraper.scrapeRaceId(elem);
@@ -89,7 +93,7 @@ public class RPCardDataScraper implements RaceDataScraper, CardEntrantScraper {
 		List<Element> entrantElems = doc.select(selector);
 		for (Element element : entrantElems) {
 			try {
-				CardEntrant entrant = new CardEntrant();
+				CardEntrant entrant = (CardEntrant) context.getBean("cardEntrant");
 
 				// Critical
 				entrant.setHorse(ceds.scrapeHorse(element));
