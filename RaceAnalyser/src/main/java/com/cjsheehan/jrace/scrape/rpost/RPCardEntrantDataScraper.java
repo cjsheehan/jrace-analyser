@@ -47,7 +47,7 @@ public class RPCardEntrantDataScraper implements CardEntrantDataScraper {
 
 	@Override
 	public int scrapeDraw(Element elem) throws ScrapeException {
-		throw new NotImplementedException("Not Implemented");
+		throw new NotImplementedException("scrapeDraw Not Implemented");
 	}
 
 	@Override

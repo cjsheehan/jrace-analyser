@@ -13,6 +13,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+// TODO : Differentiate between UK/IRE races and associated fields 
+// TODO : Differentiate between Flat/Hurdles/Chase and associated fields
+
 @Entity
 @Table(name = "race")
 public class Race {

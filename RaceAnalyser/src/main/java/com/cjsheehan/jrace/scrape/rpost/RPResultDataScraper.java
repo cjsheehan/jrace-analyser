@@ -1,7 +1,9 @@
 package com.cjsheehan.jrace.scrape.rpost;
 
+import java.lang.invoke.MethodHandles;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -10,27 +12,43 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jsoup.helper.StringUtil;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import com.cjsheehan.jrace.racing.BeatenDistance;
 import com.cjsheehan.jrace.racing.Distance;
+import com.cjsheehan.jrace.racing.FinishPosition;
 import com.cjsheehan.jrace.racing.Prize;
+import com.cjsheehan.jrace.racing.ResultEntrant;
 import com.cjsheehan.jrace.scrape.RaceDataScraper;
 import com.cjsheehan.jrace.scrape.ResultDataScraper;
+import com.cjsheehan.jrace.scrape.ResultEntrantDataScraper;
 import com.cjsheehan.jrace.scrape.ResultParamProvider;
 import com.cjsheehan.jrace.scrape.Scrape;
 import com.cjsheehan.jrace.scrape.ScrapeException;
 
 @Component
 public class RPResultDataScraper implements ResultDataScraper {
+	final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
 	@Autowired
 	@Qualifier("resultDataScraper")
 	private RaceDataScraper rdScraper;
 	
 	@Autowired
+	private ApplicationContext context;
+
+	@Autowired
 	private ResultParamProvider params;
+
+	@Autowired
+	private ResultEntrantDataScraper reds;
 	
 	private static Pattern pTime = Pattern.compile("(\\d+)m (\\d{2}).(\\d+)s"); // 3m 53.10s
 	
@@ -141,6 +159,75 @@ public class RPResultDataScraper implements ResultDataScraper {
 		}
 		
 		return Arrays.asList(splitRunners);
+	}
+
+	@Override
+	public List<ResultEntrant> scrapeEntrants(Document doc) {
+		List<ResultEntrant> entrants = new ArrayList<>();
+		String selector = "div.RC-runnerRow";
+		List<Element> entrantElems = doc.select(selector);
+		for (Element element : entrantElems) {
+			try {
+				ResultEntrant entrant = (ResultEntrant) context.getBean("resultEntrant");
+
+				// Critical
+				entrant.setHorse(reds.scrapeHorse(element));
+				entrant.setJockey(reds.scrapeJockey(element));
+				entrant.setTrainer(reds.scrapeTrainer(element));
+				entrant.setWeightCarried(reds.scrapeWeight(element));
+				entrant.setFinishPosition(scrapePosition(element));
+				entrant.setBeatenDistance(scrapeBeatenDistance(element));
+
+				// Non-Critical
+				try {
+					entrant.setAge(reds.scrapeAge(element));
+				} catch (Exception e) {
+					log.error(e.getMessage());
+				}
+
+				try {
+					entrant.setPrice(reds.scrapePrice(element));
+				} catch (Exception e) {
+					log.error(e.getMessage());
+				}
+
+				try {
+					entrant.setComments(reds.scrapeComments(element));
+				} catch (Exception e) {
+					log.error(e.getMessage());
+				}
+
+				try {
+					entrant.setRating(reds.scrapeRating(element));
+				} catch (Exception e) {
+					log.error(e.getMessage());
+				}
+
+
+				try {
+					entrant.setWeightClaim(reds.scrapeWeightAllowance(element));
+				} catch (Exception e) {
+					log.error(e.getMessage());
+				}
+
+				entrants.add(entrant);
+
+			} catch (Exception e) {
+				log.error(e.getMessage());
+			}
+		}
+		return entrants;
+	}
+
+	private BeatenDistance scrapeBeatenDistance(Element elem) throws ScrapeException {
+		double distToNext = reds.scrapeBeatenDistanceToNext(elem);
+		double distToFirst = reds.scrapeBeatenDistanceToFirst(elem);
+		return (BeatenDistance) context.getBean("beatenDistance", distToNext, distToFirst);
+	}
+
+	private FinishPosition scrapePosition(Element elem) throws ScrapeException {
+		String position = reds.scrapePosition(elem);
+		return (FinishPosition) context.getBean("finishPosition", position);
 	}
 
 }
