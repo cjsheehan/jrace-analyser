@@ -1,15 +1,13 @@
 package com.cjsheehan.jrace.racing.model;
 
 public enum Sex {
-	GELDING("g");
+	GELDING, UNKNOWN;
 
-	private String sex;
-	
-	Sex(String sex) {
-		this.sex = sex;
-	}
-
-	public String getSex() {
-		return sex;
+	public static Sex fromString(String text) {
+		if (text.matches("g")) {
+			return GELDING;
+		} else {
+			return UNKNOWN;
+		}
 	}
 }

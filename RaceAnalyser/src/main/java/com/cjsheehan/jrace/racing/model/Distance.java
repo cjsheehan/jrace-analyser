@@ -1,7 +1,12 @@
 package com.cjsheehan.jrace.racing.model;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
 import com.cjsheehan.jrace.racing.ConvertDistance;
 
+@Component
+@Scope("prototype")
 public class Distance {
 	private String distance;
 	private double yards;

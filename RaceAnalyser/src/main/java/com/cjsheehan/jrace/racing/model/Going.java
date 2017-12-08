@@ -1,16 +1,12 @@
 package com.cjsheehan.jrace.racing.model;
 
-import java.util.regex.Pattern;
-
 public enum Going {
 	HARD, FIRM, GOOD_TO_FIRM, GOOD, GOOD_TO_SOFT, SOFT, SOFT_TO_HEAVY, HEAVY, STD, YIELDING, UNKNOWN;
-
-	Pattern rxGoodToSoft = Pattern.compile("(?i)^good to soft.*");
 
 	public static Going fromString(String input) {
 		input = input.replaceFirst(" *\\(.+", "");
 
-		if (input.matches("(?i)^good to soft")) {
+		if (input.matches("(?i)good to soft")) {
 			return GOOD_TO_SOFT;
 		} else if (input.matches("(?i)soft to heavy")) {
 			return SOFT_TO_HEAVY;

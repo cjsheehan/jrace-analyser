@@ -13,7 +13,7 @@ public class RaceSummary {
 	private String courseName;
 	private Surface courseSurface;
 	private String age;
-	private String raceClass;
+	private int raceClass;
 	private Distance distance;
 	private String date;
 	private String time;
@@ -102,7 +102,7 @@ public class RaceSummary {
 	/**
 	 * @return the raceClass
 	 */
-	public String getRaceClass() {
+	public int getRaceClass() {
 		return raceClass;
 	}
 
@@ -110,7 +110,7 @@ public class RaceSummary {
 	 * @param raceClass
 	 *            the raceClass to set
 	 */
-	public void setRaceClass(String raceClass) {
+	public void setRaceClass(int raceClass) {
 		this.raceClass = raceClass;
 	}
 
